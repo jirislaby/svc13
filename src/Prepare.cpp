@@ -57,7 +57,7 @@ bool Prepare::runOnFunction(Function &F) {
 
       StringRef name = callee->getName();
 
-      if (name.equals("__assert_fail"))
+      if (name.equals("__assert_fail") || name.equals("malloc"))
 	continue;
 
       if (name.startswith("__VERIFIER_")) {
@@ -73,7 +73,7 @@ bool Prepare::runOnFunction(Function &F) {
       }
 
       if (callee->isDeclaration()) {
-	errs() << "removing call to " << callee->getName() << "\n";
+//	errs() << "removing call to " << callee->getName() << "\n";
 	/* or maybe NullValue? */
 	CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
 	CI->eraseFromParent();
@@ -84,9 +84,33 @@ bool Prepare::runOnFunction(Function &F) {
 }
 
 bool Prepare::runOnModule(Module &M) {
+  static const char *del_body[] = {
+    "__VERIFIER_assume",
+    "__VERIFIER_nondet_char",
+    "__VERIFIER_nondet_short",
+    "__VERIFIER_nondet_int",
+    NULL
+  };
   LLVMContext &C = M.getContext();
   FunctionType *T_klee_int = FunctionType::get(Type::getInt32Ty(C), false);
   F_klee_int = M.getOrInsertFunction("klee_int", T_klee_int);
+
+  for (const char **curr = del_body; *curr; curr++) {
+    Function *toDel = M.getFunction(*curr);
+    if (toDel)
+      toDel->deleteBody();
+  }
+
+#if 0
+  for (Module::const_global_iterator I = M.global_begin(), E = M.global_end();
+      I != E; ++I) {
+    const GlobalVariable *GV = &*I;
+    if (GV->isConstant())
+      continue;
+    GV->dump();
+//    errs() << "";
+  }
+#endif
 
   for (llvm::Module::iterator I = M.begin(), E = M.end(); I != E; ++I) {
     Function &F = *I;
