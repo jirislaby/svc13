@@ -66,8 +66,10 @@ bool Prepare::runOnFunction(Function &F) {
 
       if (callee->isDeclaration()) {
 //	errs() << "removing call to " << callee->getName() << "\n";
-	/* or maybe NullValue? */
-	CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
+	if (!CI->getType()->isVoidTy()) {
+//	  CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
+	  CI->replaceAllUsesWith(Constant::getNullValue(CI->getType()));
+	}
 	CI->eraseFromParent();
       }
     }
