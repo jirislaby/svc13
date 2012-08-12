@@ -32,6 +32,7 @@ namespace {
 
     private:
       bool runOnFunction(Function &F);
+      void findInitFuns(Module &M);
   };
 }
 
@@ -74,6 +75,19 @@ bool Prepare::runOnFunction(Function &F) {
   return modified;
 }
 
+void Prepare::findInitFuns(Module &M) {
+  SmallVector<Constant *, 1> initFns;
+  Type *ETy = TypeBuilder<void *, false>::get(M.getContext());
+  Function *_main = M.getFunction("main");
+  assert(_main);
+
+  initFns.push_back(ConstantExpr::getBitCast(_main, ETy));
+  ArrayType *ATy = ArrayType::get(ETy, initFns.size());
+  new GlobalVariable(M, ATy, true, GlobalVariable::InternalLinkage,
+                     ConstantArray::get(ATy, initFns),
+                     "__ai_init_functions");
+}
+
 bool Prepare::runOnModule(Module &M) {
   static const char *del_body[] = {
     "nondet_int",
@@ -107,6 +121,8 @@ bool Prepare::runOnModule(Module &M) {
     if (!F.isDeclaration())
       runOnFunction(F);
   }
+
+  findInitFuns(M);
 
   return true;
 }
