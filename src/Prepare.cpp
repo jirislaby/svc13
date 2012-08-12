@@ -32,8 +32,6 @@ namespace {
 
     private:
       bool runOnFunction(Function &F);
-
-      Constant *F_klee_int;
   };
 }
 
@@ -60,15 +58,8 @@ bool Prepare::runOnFunction(Function &F) {
       if (name.equals("__assert_fail") || name.equals("malloc"))
 	continue;
 
-      if (name.startswith("__VERIFIER_")) {
+      if (name.startswith("__VERIFIER_") || name.equals("nondet_int")) {
 //	errs() << "TADY   " << name << "\n";
-	continue;
-      }
-
-      if (name.equals("__VERIFIER_nondet_int")) {
-	BasicBlock::iterator ii(CI);
-	ReplaceInstWithInst(CI->getParent()->getInstList(), ii,
-	    CallInst::Create(F_klee_int));
 	continue;
       }
 
@@ -85,6 +76,7 @@ bool Prepare::runOnFunction(Function &F) {
 
 bool Prepare::runOnModule(Module &M) {
   static const char *del_body[] = {
+    "nondet_int",
     "__VERIFIER_assume",
     "__VERIFIER_nondet_char",
     "__VERIFIER_nondet_short",
@@ -92,8 +84,6 @@ bool Prepare::runOnModule(Module &M) {
     NULL
   };
   LLVMContext &C = M.getContext();
-  FunctionType *T_klee_int = FunctionType::get(Type::getInt32Ty(C), false);
-  F_klee_int = M.getOrInsertFunction("klee_int", T_klee_int);
 
   for (const char **curr = del_body; *curr; curr++) {
     Function *toDel = M.getFunction(*curr);
