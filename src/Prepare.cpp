@@ -103,8 +103,10 @@ bool Prepare::runOnModule(Module &M) {
 
   for (const char **curr = del_body; *curr; curr++) {
     Function *toDel = M.getFunction(*curr);
-    if (toDel)
+    if (toDel && !toDel->empty()) {
+      errs() << "deleting " << toDel->getName() << '\n';
       toDel->deleteBody();
+    }
   }
 
 #if 0
