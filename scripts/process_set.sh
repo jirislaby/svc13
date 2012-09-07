@@ -31,7 +31,7 @@ build_one() {
 }
 
 for FILE in `cat "$SET"`; do
-	OUT=`build_one "$FILE"`
+	OUT=`build_one "$FILE"` || exit 1
 #	echo "$KLEE $KLEE_PARAMS: $FILE" >&2
 	$KLEE $KLEE_PARAMS "$OUT" || exit 1
 done
