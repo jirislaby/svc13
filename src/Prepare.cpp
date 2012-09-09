@@ -54,9 +54,16 @@ bool Prepare::runOnFunction(Function &F) {
       if (!callee || callee->isIntrinsic())
 	continue;
 
+      assert(callee->hasName());
       StringRef name = callee->getName();
 
-      if (name.equals("__assert_fail") || name.equals("malloc"))
+      if (name.equals("__assert_fail") ||
+	  name.equals("exit") ||
+	  name.equals("sprintf") || name.equals("snprintf") ||
+	  name.equals("swprintf") ||
+	  name.equals("malloc") || name.equals("free") ||
+	  name.equals("memset") || name.equals("memcmp") ||
+	  name.equals("memcpy") || name.equals("memmove"))
 	continue;
 
       if (name.startswith("__VERIFIER_") || name.equals("nondet_int")) {
@@ -65,7 +72,7 @@ bool Prepare::runOnFunction(Function &F) {
       }
 
       if (callee->isDeclaration()) {
-//	errs() << "removing call to " << callee->getName() << "\n";
+	errs() << "removing call to '" << name << "'\n";
 	if (!CI->getType()->isVoidTy()) {
 //	  CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
 	  CI->replaceAllUsesWith(Constant::getNullValue(CI->getType()));
