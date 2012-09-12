@@ -2,6 +2,7 @@
 
 SET=$1
 
+test -z "$CLANG_WARNS" && CLANG_WARNS=-w
 test -z "$KLEE" && KLEE=klee
 test -z "$KLEE_PARAMS" && KLEE_PARAMS="-max-stp-time=5 -max-time=600"
 test -z "$LIB" && LIB="`dirname $0`/../lib/lib.c"
@@ -24,7 +25,7 @@ build_one() {
 
 	test -f "$OUT" -a "$OUT" -nt "$FILE" -a "$OUT" -nt "$LIBo" && return
 	echo "$FILE => $OUT" >&2
-	clang -c -g -emit-llvm -include /usr/include/assert.h -w -Wall -Wno-unknown-pragmas -Wno-uninitialized -Wno-unused-label -Wno-unused-variable -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
+	clang -c -g -emit-llvm -include /usr/include/assert.h $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
 	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" || exit 1
 	llvm-link -o "${FILE%.c}.linked" "${FILE%.c}.prepared" "$LIBo" || exit 1
 	if [ -n "$SLICE" ]; then
