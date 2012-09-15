@@ -1,0 +1,2322 @@
+From e5b599d0469dee76c0ccf2de1732ee68506e0dd3 Mon Sep 17 00:00:00 2001
+From: Jiri Slaby <jirislaby@gmail.com>
+Date: Fri, 14 Sep 2012 23:32:22 +0200
+Subject: [PATCH 1/2] add ERRORs where missing
+
+git grep -L ERROR: `cat *set`|sort |sed 's@\.i$@.c@' >bb
+sed -i 's/assert *(.*);/VER_&/; 1 s/^/VER_assert(int cond)\n{\nif (cond) return;\nERROR: goto ERROR;\n}\n/' `cat bb`
+
+Signed-off-by: Jiri Slaby <jirislaby@gmail.com>
+---
+ bitvector/byte_add_1.c                                |  7 ++++++-
+ bitvector/byte_add_2.c                                |  7 ++++++-
+ bitvector/byte_add_BUG.c                              |  7 ++++++-
+ bitvector/gcd_1.c                                     |  7 ++++++-
+ bitvector/gcd_2.c                                     |  7 ++++++-
+ bitvector/gcd_3.c                                     |  7 ++++++-
+ bitvector/gcd_4.c                                     | 11 ++++++++---
+ bitvector/interleave_bits.c                           |  7 ++++++-
+ bitvector/jain_1.c                                    |  7 ++++++-
+ bitvector/jain_2.c                                    |  7 ++++++-
+ bitvector/jain_4.c                                    |  7 ++++++-
+ bitvector/jain_5.c                                    |  7 ++++++-
+ bitvector/jain_6.c                                    |  7 ++++++-
+ bitvector/jain_7.c                                    |  7 ++++++-
+ bitvector/modulus.c                                   |  7 ++++++-
+ bitvector/num_conversion_1.c                          |  7 ++++++-
+ bitvector/num_conversion_2.c                          |  7 ++++++-
+ bitvector/parity.c                                    |  7 ++++++-
+ bitvector/soft_float_1.c.cil.c                        | 19 ++++++++++++-------
+ bitvector/soft_float_2.c.cil.c                        | 11 ++++++++---
+ bitvector/soft_float_3.c.cil.c                        | 11 ++++++++---
+ bitvector/soft_float_4.c.cil.c                        | 15 ++++++++++-----
+ bitvector/soft_float_5.c.cil.c                        | 11 ++++++++---
+ ldv-regression/nested_structure-safe.c                |  7 ++++++-
+ ldv-regression/nested_structure_noptr-safe.c          |  7 ++++++-
+ ldv-regression/nested_structure_ptr-safe.c            |  7 ++++++-
+ ldv-regression/test_malloc-1-safe.c                   |  7 ++++++-
+ ldv-regression/test_malloc-2-safe.c                   |  7 ++++++-
+ ldv-regression/test_union_cast-1-safe.c               |  9 +++++++--
+ ldv-regression/test_union_cast-2-safe.c               |  9 +++++++--
+ loops/array_safe.c                                    |  7 ++++++-
+ loops/array_unsafe.c                                  |  7 ++++++-
+ loops/bubble_sort_safe.c                              |  5 +++++
+ loops/count_up_down_safe.c                            |  7 ++++++-
+ loops/count_up_down_unsafe.c                          |  7 ++++++-
+ loops/eureka_01_safe.c                                |  7 ++++++-
+ loops/eureka_01_unsafe.c                              |  7 ++++++-
+ loops/eureka_05_safe.c                                |  7 ++++++-
+ loops/for_bounded_loop1_unsafe.c                      | 11 ++++++++---
+ loops/for_infinite_loop_1_safe.c                      |  9 +++++++--
+ loops/for_infinite_loop_2_safe.c                      |  9 +++++++--
+ loops/insertion_sort_safe.c                           |  7 ++++++-
+ loops/insertion_sort_unsafe.c                         |  7 ++++++-
+ loops/invert_string_safe.c                            |  7 ++++++-
+ loops/invert_string_unsafe.c                          |  7 ++++++-
+ loops/linear_sea.ch_safe.c                            |  7 ++++++-
+ loops/linear_search_unsafe.c                          |  7 ++++++-
+ loops/list_safe.c                                     |  7 ++++++-
+ loops/list_unsafe.c                                   |  7 ++++++-
+ loops/lu.cmp_safe.c                                   |  7 ++++++-
+ loops/ludcmp_unsafe.c                                 |  7 ++++++-
+ loops/matrix_safe.c                                   |  7 ++++++-
+ loops/matrix_unsafe.c                                 |  7 ++++++-
+ loops/n.c11_safe.c                                    |  7 ++++++-
+ loops/n.c24_safe.c                                    |  7 ++++++-
+ loops/nec11_unsafe.c                                  |  7 ++++++-
+ loops/nec20_unsafe.c                                  |  7 ++++++-
+ loops/nec40_safe.c                                    |  7 ++++++-
+ loops/string_safe.c                                   |  7 ++++++-
+ loops/string_unsafe.c                                 |  7 ++++++-
+ loops/sum01_bug02_sum01_bug02_base.case_unsafe.c      |  7 ++++++-
+ loops/sum01_bug02_unsafe.c                            |  7 ++++++-
+ loops/sum01_safe.c                                    |  7 ++++++-
+ loops/sum01_unsafe.c                                  |  7 ++++++-
+ loops/sum02_safe.c                                    |  7 ++++++-
+ loops/sum03_safe.c                                    |  7 ++++++-
+ loops/sum03_unsafe.c                                  |  7 ++++++-
+ loops/sum04_safe.c                                    |  7 ++++++-
+ loops/sum04_unsafe.c                                  |  7 ++++++-
+ loops/sum_array_safe.c                                |  7 ++++++-
+ loops/sum_array_unsafe.c                              |  7 ++++++-
+ loops/terminator_01_safe.c                            |  5 +++++
+ loops/terminator_01_unsafe.c                          |  7 ++++++-
+ loops/terminator_02_safe.c                            |  7 ++++++-
+ loops/terminator_02_unsafe.c                          |  7 ++++++-
+ loops/terminator_03_safe.c                            |  7 ++++++-
+ loops/terminator_03_unsafe.c                          |  7 ++++++-
+ loops/trex01_safe.c                                   |  7 ++++++-
+ loops/trex01_unsafe.c                                 |  7 ++++++-
+ loops/trex02_safe.c                                   |  7 ++++++-
+ loops/trex02_unsafe.c                                 |  7 ++++++-
+ loops/trex03_safe.c                                   |  7 ++++++-
+ loops/trex03_unsafe.c                                 |  7 ++++++-
+ loops/trex04_safe.c                                   |  7 ++++++-
+ loops/veris.c_NetBSD-libc__loop_safe.c                |  7 ++++++-
+ .../veris.c_OpenSER__cases1_stripFullBoth_arr_safe.c  |  5 +++++
+ loops/veris.c_sendmail__tTflag_arr_one_loop_safe.c    |  7 ++++++-
+ loops/verisec_NetBSD-libc__loop_unsafe.c              |  7 ++++++-
+ ...verisec_OpenSER__cases1_stripFullBoth_arr_unsafe.c |  7 ++++++-
+ loops/verisec_sendmail__tTflag_arr_one_loop_unsafe.c  |  7 ++++++-
+ loops/vogal_safe.c                                    |  7 ++++++-
+ loops/vogal_unsafe.c                                  |  7 ++++++-
+ loops/while_infinite_loop_1_safe.c                    |  9 +++++++--
+ loops/while_infinite_loop_2_safe.c                    |  9 +++++++--
+ loops/while_infinite_loop_3_safe.c                    |  9 +++++++--
+ loops/while_infinite_loop_4_unsafe.c                  |  9 +++++++--
+ 96 files changed, 601 insertions(+), 121 deletions(-)
+
+diff --git a/bitvector/byte_add_1.c b/bitvector/byte_add_1.c
+index 4312e26..d4a20c0 100644
+--- a/bitvector/byte_add_1.c
++++ b/bitvector/byte_add_1.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* emulates multi-precision addition */
+ #include <assert.h>
+ 
+@@ -99,7 +104,7 @@ int main()
+ 
+     r = mp_add(a, b);
+ 
+-    assert(r == a + b);
++    VER_assert(r == a + b);
+     
+     return 0;
+ }
+diff --git a/bitvector/byte_add_2.c b/bitvector/byte_add_2.c
+index 06fe554..f58a3f2 100644
+--- a/bitvector/byte_add_2.c
++++ b/bitvector/byte_add_2.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* emulates multi-precision addition */
+ #include <assert.h>
+ 
+@@ -99,7 +104,7 @@ int main()
+ 
+     r = mp_add(a, b);
+ 
+-    assert(r == a + b);
++    VER_assert(r == a + b);
+     
+     return 0;
+ }
+diff --git a/bitvector/byte_add_BUG.c b/bitvector/byte_add_BUG.c
+index 52b2e93..9be0ab9 100644
+--- a/bitvector/byte_add_BUG.c
++++ b/bitvector/byte_add_BUG.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* emulates multi-precision addition */
+ #include <assert.h>
+ 
+@@ -97,7 +102,7 @@ int main()
+ 
+     r = mp_add(a, b);
+ 
+-    assert(r == a + b);
++    VER_assert(r == a + b);
+     
+     return 0;
+ }
+diff --git a/bitvector/gcd_1.c b/bitvector/gcd_1.c
+index 75157d7..574b0da 100644
+--- a/bitvector/gcd_1.c
++++ b/bitvector/gcd_1.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ signed char gcd_test(signed char a, signed char b)
+ {
+     signed char t;
+@@ -23,7 +28,7 @@ int main()
+     if (y > 0 && x % y == 0) {
+         g = gcd_test(x, y);
+ 
+-        assert(g == y);
++        VER_assert(g == y);
+     }
+ 
+     return 0;
+diff --git a/bitvector/gcd_2.c b/bitvector/gcd_2.c
+index 9630de0..abc96cf 100644
+--- a/bitvector/gcd_2.c
++++ b/bitvector/gcd_2.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ signed char gcd_test(signed char a, signed char b)
+ {
+     signed char t;
+@@ -23,7 +28,7 @@ int main()
+     g = gcd_test(x, y);
+ 
+     if (y > (signed char)0) {
+-        assert(y >= g);
++        VER_assert(y >= g);
+     }
+ 
+     return 0;
+diff --git a/bitvector/gcd_3.c b/bitvector/gcd_3.c
+index ee09807..bb2ee59 100644
+--- a/bitvector/gcd_3.c
++++ b/bitvector/gcd_3.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ signed char gcd_test(signed char a, signed char b)
+ {
+     signed char t;
+@@ -23,7 +28,7 @@ int main()
+     g = gcd_test(x, y);
+ 
+     if (x > (signed char)0) {
+-        assert(x >= g);
++        VER_assert(x >= g);
+     }
+ 
+     return 0;
+diff --git a/bitvector/gcd_4.c b/bitvector/gcd_4.c
+index c5e2077..73082f6 100644
+--- a/bitvector/gcd_4.c
++++ b/bitvector/gcd_4.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ long gcd_test(long a, long b)
+ {
+     if (a < 0) a = -a;
+@@ -29,9 +34,9 @@ int main()
+ 
+     g = gcd_test(x, y);
+ 
+-    assert(x % g == 0);
+-    assert(y % g == 0);
+-    assert(g == 9);
++    VER_assert(x % g == 0);
++    VER_assert(y % g == 0);
++    VER_assert(g == 9);
+ 
+     return 0;
+ }
+diff --git a/bitvector/interleave_bits.c b/bitvector/interleave_bits.c
+index ca1b936..56077ca 100644
+--- a/bitvector/interleave_bits.c
++++ b/bitvector/interleave_bits.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* https://graphics.stanford.edu/~seander/bithacks.html#InterleaveTableObvious */
+ #include <assert.h>
+ 
+@@ -35,5 +40,5 @@ int main()
+     
+     zz = xx | (yy << 1U);
+ 
+-    assert(z == zz);
++    VER_assert(z == zz);
+ }
+diff --git a/bitvector/jain_1.c b/bitvector/jain_1.c
+index 58c3d22..dd67517 100644
+--- a/bitvector/jain_1.c
++++ b/bitvector/jain_1.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int y;
+@@ -9,7 +14,7 @@ void main()
+       y = y +2*nondet_int();
+ 
+ 
+-      assert (y!=0);
++      VER_assert (y!=0);
+ 	
+     }
+ }
+diff --git a/bitvector/jain_2.c b/bitvector/jain_2.c
+index 4d93153..a0ebbab 100644
+--- a/bitvector/jain_2.c
++++ b/bitvector/jain_2.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int x,y;
+@@ -11,7 +16,7 @@ void main()
+       y = y +2*nondet_int();
+ 
+ 
+-      assert(x+y!=1);
++      VER_assert(x+y!=1);
+     }
+ }
+ 
+diff --git a/bitvector/jain_4.c b/bitvector/jain_4.c
+index 6957e42..c4e4f20 100644
+--- a/bitvector/jain_4.c
++++ b/bitvector/jain_4.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int x,y,z;
+@@ -12,7 +17,7 @@ void main()
+       y = y +4*nondet_int();
+       z = z +8*nondet_int();
+ 
+-      assert(x+y+z!=1);
++      VER_assert(x+y+z!=1);
+     }
+ }
+ 
+diff --git a/bitvector/jain_5.c b/bitvector/jain_5.c
+index 54e32ba..dbfefed 100644
+--- a/bitvector/jain_5.c
++++ b/bitvector/jain_5.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int x,y;
+@@ -12,7 +17,7 @@ void main()
+       y = y +4;
+       
+       
+-      assert(x!=30);
++      VER_assert(x!=30);
+     }
+ }
+ 
+diff --git a/bitvector/jain_6.c b/bitvector/jain_6.c
+index 150af6f..852c377 100644
+--- a/bitvector/jain_6.c
++++ b/bitvector/jain_6.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int x,y,z;
+@@ -12,7 +17,7 @@ void main()
+       y = y +4*nondet_int();
+       z = z +8*nondet_int();
+ 
+-      assert(4*x+2*y+z!=4);
++      VER_assert(4*x+2*y+z!=4);
+     }
+ }
+ 
+diff --git a/bitvector/jain_7.c b/bitvector/jain_7.c
+index 39ad34f..a3c6a71 100644
+--- a/bitvector/jain_7.c
++++ b/bitvector/jain_7.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ void main()
+ {
+   int x,y,z;
+@@ -12,7 +17,7 @@ void main()
+       y = y +2097152*nondet_int();
+       z = z +4194304*nondet_int();
+ 
+-      assert(4*x-2*y+z!=1048576);
++      VER_assert(4*x-2*y+z!=1048576);
+     }
+ }
+ 
+diff --git a/bitvector/modulus.c b/bitvector/modulus.c
+index d9b61dc..f93996d 100644
+--- a/bitvector/modulus.c
++++ b/bitvector/modulus.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* https://graphics.stanford.edu/~seander/bithacks.html#ModulusDivisionEasy */
+ #include <assert.h>
+ 
+@@ -27,7 +32,7 @@ int main()
+             m = 0;
+         }
+ 
+-        assert(m == n % d);
++        VER_assert(m == n % d);
+     }
+ 
+     return 0;
+diff --git a/bitvector/num_conversion_1.c b/bitvector/num_conversion_1.c
+index c07eb51..45c41e1 100644
+--- a/bitvector/num_conversion_1.c
++++ b/bitvector/num_conversion_1.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ //#include <assert.h>
+ 
+ int main()
+@@ -17,7 +22,7 @@ int main()
+         }
+         c = c + ((unsigned char)1);
+     }
+-    assert(x == y);
++    VER_assert(x == y);
+     
+     return 0;
+ }
+diff --git a/bitvector/num_conversion_2.c b/bitvector/num_conversion_2.c
+index b41d56b..fe6a6fa 100644
+--- a/bitvector/num_conversion_2.c
++++ b/bitvector/num_conversion_2.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ //#include <assert.h>
+ 
+ int main()
+@@ -16,7 +21,7 @@ int main()
+         }
+         c = c + ((unsigned char)1);
+     }
+-    assert(x == y);
++    VER_assert(x == y);
+     
+     return 0;
+ }
+diff --git a/bitvector/parity.c b/bitvector/parity.c
+index 65993da..baa28a2 100644
+--- a/bitvector/parity.c
++++ b/bitvector/parity.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* see https://graphics.stanford.edu/~seander/bithacks.html#ParityNaive */
+ #include <assert.h>
+ 
+@@ -33,7 +38,7 @@ int main()
+         parity2 = (char)1;
+     }
+ 
+-    assert(parity1 == parity2);
++    VER_assert(parity1 == parity2);
+ 
+     return 0;
+ }
+diff --git a/bitvector/soft_float_1.c.cil.c b/bitvector/soft_float_1.c.cil.c
+index eff9c34..c58fd69 100644
+--- a/bitvector/soft_float_1.c.cil.c
++++ b/bitvector/soft_float_1.c.cil.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Generated by CIL v. 1.3.7 */
+ /* print_CIL_Input is true */
+ 
+@@ -91,7 +96,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+   mb = b & ((1U << 24U) - 1U);
+   eb = (int )(b >> 24U) - 128;
+   mb = mb | (1U << 24U);
+-  assert(ea >= eb);
++  VER_assert(ea >= eb);
+   delta = ea - eb;
+   mb = mb >> delta;
+   }
+@@ -115,7 +120,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(ma < 1U << 25U);
++  VER_assert(ma < 1U << 25U);
+   ma = ma & ((1U << 24U) - 1U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+   }
+@@ -190,8 +195,8 @@ unsigned int mulflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(accu < (unsigned long long )(1U << 25U));
+-  assert(accu & (unsigned long long )(1U << 24U));
++  VER_assert(accu < (unsigned long long )(1U << 25U));
++  VER_assert(accu & (unsigned long long )(1U << 24U));
+   ma = accu;
+   ma = ma & ~ (1U << 24U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+@@ -267,7 +272,7 @@ int main(void)
+         tmp___2 = tmp___1;
+       }
+       {
+-      assert(tmp___2 >= 0);
++      VER_assert(tmp___2 >= 0);
+       }
+       if (r_add < b) {
+         tmp___4 = -1;
+@@ -280,7 +285,7 @@ int main(void)
+         tmp___4 = tmp___3;
+       }
+       {
+-      assert(tmp___4 >= 0);
++      VER_assert(tmp___4 >= 0);
+       }
+     } else {
+ 
+@@ -323,7 +328,7 @@ int main(void)
+         }
+       }
+       {
+-      assert(tmp___9);
++      VER_assert(tmp___9);
+       }
+     } else {
+ 
+diff --git a/bitvector/soft_float_2.c.cil.c b/bitvector/soft_float_2.c.cil.c
+index 867674c..913ed87 100644
+--- a/bitvector/soft_float_2.c.cil.c
++++ b/bitvector/soft_float_2.c.cil.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Generated by CIL v. 1.3.7 */
+ /* print_CIL_Input is true */
+ 
+@@ -91,7 +96,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+   mb = b & ((1U << 24U) - 1U);
+   eb = (int )(b >> 24U) - 128;
+   mb = mb | (1U << 24U);
+-  assert(ea >= eb);
++  VER_assert(ea >= eb);
+   delta = ea - eb;
+   mb = mb >> delta;
+   }
+@@ -115,7 +120,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(ma < 1U << 25U);
++  VER_assert(ma < 1U << 25U);
+   ma = ma & ((1U << 24U) - 1U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+   }
+@@ -245,7 +250,7 @@ int main(void)
+       tmp___1 = tmp___0;
+     }
+     {
+-    assert(tmp___1 == 0);
++    VER_assert(tmp___1 == 0);
+     }
+   } else {
+ 
+diff --git a/bitvector/soft_float_3.c.cil.c b/bitvector/soft_float_3.c.cil.c
+index 0e992bd..1d88727 100644
+--- a/bitvector/soft_float_3.c.cil.c
++++ b/bitvector/soft_float_3.c.cil.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Generated by CIL v. 1.3.7 */
+ /* print_CIL_Input is true */
+ 
+@@ -91,7 +96,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+   mb = b & ((1U << 24U) - 1U);
+   eb = (int )(b >> 24U) - 128;
+   mb = mb | (1U << 24U);
+-  assert(ea >= eb);
++  VER_assert(ea >= eb);
+   delta = ea - eb;
+   mb = mb >> delta;
+   }
+@@ -115,7 +120,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(ma < 1U << 25U);
++  VER_assert(ma < 1U << 25U);
+   ma = ma & ((1U << 24U) - 1U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+   }
+@@ -243,7 +248,7 @@ int main(void)
+       tmp___1 = tmp___0;
+     }
+     {
+-    assert(tmp___1 == 0);
++    VER_assert(tmp___1 == 0);
+     }
+   } else {
+ 
+diff --git a/bitvector/soft_float_4.c.cil.c b/bitvector/soft_float_4.c.cil.c
+index c5770bf..30f192a 100644
+--- a/bitvector/soft_float_4.c.cil.c
++++ b/bitvector/soft_float_4.c.cil.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Generated by CIL v. 1.3.7 */
+ /* print_CIL_Input is true */
+ 
+@@ -91,7 +96,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+   mb = b & ((1U << 24U) - 1U);
+   eb = (int )(b >> 24U) - 128;
+   mb = mb | (1U << 24U);
+-  assert(ea >= eb);
++  VER_assert(ea >= eb);
+   delta = ea - eb;
+   mb = mb >> delta;
+   }
+@@ -115,7 +120,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(ma < 1U << 25U);
++  VER_assert(ma < 1U << 25U);
+   ma = ma & ((1U << 24U) - 1U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+   }
+@@ -190,8 +195,8 @@ unsigned int mulflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(accu < (unsigned long long )(1U << 25U));
+-  assert(accu & (unsigned long long )(1U << 24U));
++  VER_assert(accu < (unsigned long long )(1U << 25U));
++  VER_assert(accu & (unsigned long long )(1U << 24U));
+   ma = accu;
+   ma = ma & ~ (1U << 24U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+@@ -234,7 +239,7 @@ int main(void)
+     tmp___0 = tmp;
+   }
+   {
+-  assert(tmp___0 == 0);
++  VER_assert(tmp___0 == 0);
+   }
+   __retres14 = 0;
+   return (__retres14);
+diff --git a/bitvector/soft_float_5.c.cil.c b/bitvector/soft_float_5.c.cil.c
+index c274fb7..f05317f 100644
+--- a/bitvector/soft_float_5.c.cil.c
++++ b/bitvector/soft_float_5.c.cil.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Generated by CIL v. 1.3.7 */
+ /* print_CIL_Input is true */
+ 
+@@ -91,7 +96,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+   mb = b & ((1U << 24U) - 1U);
+   eb = (int )(b >> 24U) - 128;
+   mb = mb | (1U << 24U);
+-  assert(ea >= eb);
++  VER_assert(ea >= eb);
+   delta = ea - eb;
+   mb = mb >> delta;
+   }
+@@ -115,7 +120,7 @@ unsigned int addflt(unsigned int a , unsigned int b )
+ 
+   }
+   {
+-  assert(ma < 1U << 25U);
++  VER_assert(ma < 1U << 25U);
+   ma = ma & ((1U << 24U) - 1U);
+   res = ma | (unsigned int )((ea + 128) << 24U);
+   }
+@@ -245,7 +250,7 @@ int main(void)
+       tmp___1 = tmp___0;
+     }
+     {
+-    assert(tmp___1 == 0);
++    VER_assert(tmp___1 == 0);
+     }
+   } else {
+ 
+diff --git a/ldv-regression/nested_structure-safe.c b/ldv-regression/nested_structure-safe.c
+index d43b7f1..3e6c635 100644
+--- a/ldv-regression/nested_structure-safe.c
++++ b/ldv-regression/nested_structure-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /* Complex lvalue assignment
+  */
+ 
+@@ -21,7 +26,7 @@ int main()
+ 	struct Inner inner = {2, &im};
+ 	struct Toplev good = { 1, &inner};
+ 	good.x->y->c = 4;
+-	assert (good.x->y->c == 4);
++	VER_assert (good.x->y->c == 4);
+ 	return 0;
+ }
+ 
+diff --git a/ldv-regression/nested_structure_noptr-safe.c b/ldv-regression/nested_structure_noptr-safe.c
+index 1ca45c6..e3a2809 100644
+--- a/ldv-regression/nested_structure_noptr-safe.c
++++ b/ldv-regression/nested_structure_noptr-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ /* Complex lvalue assignment
+  */
+@@ -20,7 +25,7 @@ int main()
+ {
+ 	struct Toplev good = { 1, {2, {3}}};
+ 	good.x.y.c = 4;
+-	assert (good.x.y.c == 4);
++	VER_assert (good.x.y.c == 4);
+ 	return 0;
+ }
+ 
+diff --git a/ldv-regression/nested_structure_ptr-safe.c b/ldv-regression/nested_structure_ptr-safe.c
+index 08c6ca9..aee2375 100644
+--- a/ldv-regression/nested_structure_ptr-safe.c
++++ b/ldv-regression/nested_structure_ptr-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ /* Complex lvalue assignment
+  */
+@@ -23,7 +28,7 @@ int main()
+ 	struct Toplev good = { 1, &inner};
+ 	struct Toplev *ptr = &good;
+ 	ptr->x->y->c = 4;
+-	assert (ptr->x->y->c == 4);
++	VER_assert (ptr->x->y->c == 4);
+ 	return 0;
+ }
+ 
+diff --git a/ldv-regression/test_malloc-1-safe.c b/ldv-regression/test_malloc-1-safe.c
+index b2b7921..d833fa0 100644
+--- a/ldv-regression/test_malloc-1-safe.c
++++ b/ldv-regression/test_malloc-1-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <assert.h>
+ #include <malloc.h>
+ 
+@@ -25,7 +30,7 @@ int main(void) {
+ #endif
+ */
+ 	if(p1!=0 && p2!=0) {
+-		assert(p1!=p2);
++		VER_assert(p1!=p2);
+ 	}
+ 	return 0;
+ }
+diff --git a/ldv-regression/test_malloc-2-safe.c b/ldv-regression/test_malloc-2-safe.c
+index aba3305..489b5a8 100644
+--- a/ldv-regression/test_malloc-2-safe.c
++++ b/ldv-regression/test_malloc-2-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <assert.h>
+ #include <malloc.h>
+ 
+@@ -25,7 +30,7 @@ int main(void) {
+ 	int *p2=&b;
+ //#endif
+ 	if(p1!=0 && p2!=0) {
+-		assert(p1!=p2);
++		VER_assert(p1!=p2);
+ 	}
+ 	return 0;
+ }
+diff --git a/ldv-regression/test_union_cast-1-safe.c b/ldv-regression/test_union_cast-1-safe.c
+index 6d31a32..7a757d8 100644
+--- a/ldv-regression/test_union_cast-1-safe.c
++++ b/ldv-regression/test_union_cast-1-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <assert.h>
+ 
+ // #ifdef BLAST_AUTO_1
+@@ -26,12 +31,12 @@ int main(void) {
+ 	union X var;
+ 	var.z = 0x1.4p+4;
+ 	var.y = 10u;
+-	assert(var.y==10u);
++	VER_assert(var.y==10u);
+ // #else
+ // 	struct l_struct_2E_X llvm_cbe_var;
+ // 	*((&llvm_cbe_var.field0)) = 0x1.4p+4;
+ // 	*(((unsigned int *)((&llvm_cbe_var.field0)))) = 10u;
+-// 	assert(*(((unsigned int *)((&llvm_cbe_var.field0)))) == 10u);
++// 	VER_assert(*(((unsigned int *)((&llvm_cbe_var.field0)))) == 10u);
+ // #endif
+ 	return 0;
+ }
+diff --git a/ldv-regression/test_union_cast-2-safe.c b/ldv-regression/test_union_cast-2-safe.c
+index 81512fa..f7b3337 100644
+--- a/ldv-regression/test_union_cast-2-safe.c
++++ b/ldv-regression/test_union_cast-2-safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <assert.h>
+ 
+ // #ifdef BLAST_AUTO_1
+@@ -26,12 +31,12 @@ int main(void) {
+ // 	union X var;
+ // 	var.z = 0x1.4p+4;
+ // 	var.y = 10u;
+-// 	assert(var.y==10u);
++// 	VER_assert(var.y==10u);
+ // #else
+ 	struct l_struct_2E_X llvm_cbe_var;
+ 	*((&llvm_cbe_var.field0)) = 0x1.4p+4;
+ 	*(((unsigned int *)((&llvm_cbe_var.field0)))) = 10u;
+-	assert(*(((unsigned int *)((&llvm_cbe_var.field0)))) == 10u);
++	VER_assert(*(((unsigned int *)((&llvm_cbe_var.field0)))) == 10u);
+ // #endif
+ 	return 0;
+ }
+diff --git a/loops/array_safe.c b/loops/array_safe.c
+index 96a443f..aac4dcc 100644
+--- a/loops/array_safe.c
++++ b/loops/array_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+ main()
+@@ -15,6 +20,6 @@ main()
+           menor = array[j];                          
+     }                       
+     
+-    assert(array[0]>=menor);    
++    VER_assert(array[0]>=menor);    
+ }
+ 
+diff --git a/loops/array_unsafe.c b/loops/array_unsafe.c
+index 41ed1ac..3d64fb4 100644
+--- a/loops/array_unsafe.c
++++ b/loops/array_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+ main()
+@@ -15,6 +20,6 @@ main()
+           menor = array[j];                          
+     }                       
+     
+-    assert(array[0]>menor);    
++    VER_assert(array[0]>menor);    
+ }
+ 
+diff --git a/loops/bubble_sort_safe.c b/loops/bubble_sort_safe.c
+index fb0a8c9..188f367 100644
+--- a/loops/bubble_sort_safe.c
++++ b/loops/bubble_sort_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ # 1 "main.c"
+ # 1 "<command-line>"
+ # 1 "main.c"
+diff --git a/loops/count_up_down_safe.c b/loops/count_up_down_safe.c
+index 9a09383..c9e7784 100644
+--- a/loops/count_up_down_safe.c
++++ b/loops/count_up_down_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ 
+ int main()
+@@ -9,6 +14,6 @@ int main()
+     x--;
+     y++;
+   }
+-  assert(y==n);
++  VER_assert(y==n);
+ }
+ 
+diff --git a/loops/count_up_down_unsafe.c b/loops/count_up_down_unsafe.c
+index f0e941e..e023408 100644
+--- a/loops/count_up_down_unsafe.c
++++ b/loops/count_up_down_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ 
+ int main()
+@@ -9,5 +14,5 @@ int main()
+     x--;
+     y++;
+   }
+-  assert(y!=n);
++  VER_assert(y!=n);
+ }
+diff --git a/loops/eureka_01_safe.c b/loops/eureka_01_safe.c
+index a7662d7..a141a23 100644
+--- a/loops/eureka_01_safe.c
++++ b/loops/eureka_01_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int INFINITY = 899;
+ 
+ int main(){
+@@ -44,7 +49,7 @@ int main(){
+ 
+   for(i = 0; i < nodecount; i++)
+     {
+-      assert(distance[i]>=0);
++      VER_assert(distance[i]>=0);
+     }
+ 
+   return 0;
+diff --git a/loops/eureka_01_unsafe.c b/loops/eureka_01_unsafe.c
+index bee284b..48b07e9 100644
+--- a/loops/eureka_01_unsafe.c
++++ b/loops/eureka_01_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int INFINITY = 899;
+ unsigned int __VERIFIER_nondet_uint();
+ void main(){
+@@ -44,7 +49,7 @@ void main(){
+ 
+   for(i = 0; i < nodecount; i++)
+     {
+-      assert(distance[i]>=0);
++      VER_assert(distance[i]>=0);
+     }
+ 
+ }
+diff --git a/loops/eureka_05_safe.c b/loops/eureka_05_safe.c
+index bcb43d0..b6c2c47 100644
+--- a/loops/eureka_05_safe.c
++++ b/loops/eureka_05_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ #define SIZE 5
+ 
+@@ -28,7 +33,7 @@ int main(void){
+ 	SelectionSort();
+ 
+ 	for(i=0; i<SIZE; i++)
+-		assert(array[i]==i);
++		VER_assert(array[i]==i);
+ 
+ }
+ 
+diff --git a/loops/for_bounded_loop1_unsafe.c b/loops/for_bounded_loop1_unsafe.c
+index eee094f..68a58a0 100644
+--- a/loops/for_bounded_loop1_unsafe.c
++++ b/loops/for_bounded_loop1_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int __VERIFIER_nondet_int();
+ 
+@@ -8,12 +13,12 @@ int main() {
+   for(i=0; i<n; i++)
+   {
+     x = x-y;
+-    assert(x==0);
++    VER_assert(x==0);
+     y = __VERIFIER_nondet_int();
+     __VERIFIER_assume(y!=0);
+     x = x+y;
+-    assert(x!=0);
++    VER_assert(x!=0);
+   }
+-  assert(x==0);
++  VER_assert(x==0);
+ }
+ 
+diff --git a/loops/for_infinite_loop_1_safe.c b/loops/for_infinite_loop_1_safe.c
+index 504b285..f32ac47 100644
+--- a/loops/for_infinite_loop_1_safe.c
++++ b/loops/for_infinite_loop_1_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int __VERIFIER_nondet_int();
+ 
+@@ -7,8 +12,8 @@ int main() {
+   __VERIFIER_assume(n>0);
+   for(i=0; 1; i++)
+   {
+-    assert(x==0);
++    VER_assert(x==0);
+   }
+-  assert(x==0);
++  VER_assert(x==0);
+ }
+ 
+diff --git a/loops/for_infinite_loop_2_safe.c b/loops/for_infinite_loop_2_safe.c
+index 4d1af70..bb0dd9f 100644
+--- a/loops/for_infinite_loop_2_safe.c
++++ b/loops/for_infinite_loop_2_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int __VERIFIER_nondet_int();
+ 
+@@ -7,8 +12,8 @@ int main() {
+   __VERIFIER_assume(n>0);
+   for(i=0; 1; i++)
+   {
+-    assert(x==0);
++    VER_assert(x==0);
+   }
+-  assert(x!=0);
++  VER_assert(x!=0);
+ }
+ 
+diff --git a/loops/insertion_sort_safe.c b/loops/insertion_sort_safe.c
+index a21d922..d65323b 100644
+--- a/loops/insertion_sort_safe.c
++++ b/loops/insertion_sort_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int SIZE=__VERIFIER_nondet_uint();
+ int main() {
+@@ -13,7 +18,7 @@ int main() {
+       v[i+1] = key;	        
+   }      
+   for (k=1;k<SIZE;k++)
+-    assert(v[k-1]<=v[k]);  
++    VER_assert(v[k-1]<=v[k]);  
+    return 0;
+ }
+ 
+diff --git a/loops/insertion_sort_unsafe.c b/loops/insertion_sort_unsafe.c
+index 7f046ad..42126b3 100644
+--- a/loops/insertion_sort_unsafe.c
++++ b/loops/insertion_sort_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int SIZE=__VERIFIER_nondet_uint();
+ int main() {
+@@ -14,6 +19,6 @@ int main() {
+       v[i+1] = key;	        
+   }      
+   for (k=1;k<SIZE;k++)
+-    assert(v[k-1]<=v[k]);  
++    VER_assert(v[k-1]<=v[k]);  
+    return 0;
+ }
+diff --git a/loops/invert_string_safe.c b/loops/invert_string_safe.c
+index 2fa5164..4576230 100644
+--- a/loops/invert_string_safe.c
++++ b/loops/invert_string_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ char __VERIFIER_nondet_char();
+ 
+ int main() {
+@@ -20,7 +25,7 @@ int main() {
+ 
+     j = max-1;
+     for (i=0; i<max; i++) {
+-      assert(str1[i] == str2[j]);
++      VER_assert(str1[i] == str2[j]);
+       j--;
+     }   
+ }
+diff --git a/loops/invert_string_unsafe.c b/loops/invert_string_unsafe.c
+index 7a25c02..54b8ba2 100644
+--- a/loops/invert_string_unsafe.c
++++ b/loops/invert_string_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ char __VERIFIER_nondet_char();
+ unsigned int __VERIFIER_nondet_uint();
+ int MAX = __VERIFIER_nondet_uint();
+@@ -21,7 +26,7 @@ int main() {
+ 
+     j = MAX-1;
+     for (i=0; i<MAX; i++) {
+-      assert(str1[i] == str2[j]);
++      VER_assert(str1[i] == str2[j]);
+ 	  j--;
+     }
+ }
+diff --git a/loops/linear_sea.ch_safe.c b/loops/linear_sea.ch_safe.c
+index 9935a6d..f2fd3c3 100644
+--- a/loops/linear_sea.ch_safe.c
++++ b/loops/linear_sea.ch_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int  SIZE=(__VERIFIER_nondet_uint()/2)+1;
+ int linear_search(int *a, int n, int q) {
+@@ -11,5 +16,5 @@ int linear_search(int *a, int n, int q) {
+ int main() { 
+   int a[SIZE];
+   a[SIZE/2]=3;
+-  assert(linear_search(a,SIZE,3));
++  VER_assert(linear_search(a,SIZE,3));
+ }
+diff --git a/loops/linear_search_unsafe.c b/loops/linear_search_unsafe.c
+index 6ed5a1d..bf25818 100644
+--- a/loops/linear_search_unsafe.c
++++ b/loops/linear_search_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int  SIZE=(__VERIFIER_nondet_uint()/2)+1;
+ int linear_search(int *a, int n, int q) {
+@@ -12,5 +17,5 @@ int linear_search(int *a, int n, int q) {
+ int main() { 
+   int a[SIZE];
+   a[SIZE/2]=3;
+-  assert(linear_search(a,SIZE,3));
++  VER_assert(linear_search(a,SIZE,3));
+ }
+diff --git a/loops/list_safe.c b/loops/list_safe.c
+index 0123db3..c3d71f6 100644
+--- a/loops/list_safe.c
++++ b/loops/list_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <stdio.h>
+ #include<stdlib.h>
+ 
+@@ -64,7 +69,7 @@ int main(void){
+ 	}
+ 
+ 	temp = search_list(mylist,2);
+-	assert(temp->key==2);
++	VER_assert(temp->key==2);
+ 	delete_list(temp);
+ 
+ 	mylist = head;
+diff --git a/loops/list_unsafe.c b/loops/list_unsafe.c
+index fd73d64..495441a 100644
+--- a/loops/list_unsafe.c
++++ b/loops/list_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <stdlib.h>
+ typedef struct list {
+ 	int key;
+@@ -35,6 +40,6 @@ int main(void){
+   insert_list(mylist,1);
+   insert_list(mylist,3);
+   temp = search_list(head,2);
+-  assert(temp->key==1);
++  VER_assert(temp->key==1);
+ }
+ 
+diff --git a/loops/lu.cmp_safe.c b/loops/lu.cmp_safe.c
+index f69d212..e8a9dca 100644
+--- a/loops/lu.cmp_safe.c
++++ b/loops/lu.cmp_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /*************************************************************************/
+ /*                                                                       */
+ /*   SNU-RT Benchmark Suite for Worst Case Timing Analysis               */
+@@ -89,7 +94,7 @@ void main()
+ 					if(i == j) a[i][j] *= 10.0;
+ 					w += a[i][j];
+ 			}
+-                        assert(i < 50);
++                        VER_assert(i < 50);
+ 			b[i] = w;	
+ 	}
+ 
+diff --git a/loops/ludcmp_unsafe.c b/loops/ludcmp_unsafe.c
+index 1e92891..5e29f80 100644
+--- a/loops/ludcmp_unsafe.c
++++ b/loops/ludcmp_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ /*************************************************************************/
+ /*                                                                       */
+ /*   SNU-RT Benchmark Suite for Worst Case Timing Analysis               */
+@@ -89,7 +94,7 @@ void main()
+ 					if(i == j) a[i][j] *= 10.0;
+ 					w += a[i][j];
+ 			}
+-                        assert(i==2);
++                        VER_assert(i==2);
+ 			b[i] = w;	
+ 	}
+ 
+diff --git a/loops/matrix_safe.c b/loops/matrix_safe.c
+index c15b6f6..58a4e8a 100644
+--- a/loops/matrix_safe.c
++++ b/loops/matrix_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+ main()
+@@ -17,6 +22,6 @@ main()
+           maior = matriz[j][k];                          
+     }                       
+     
+-  assert(matriz[0][0]<=maior);    
++  VER_assert(matriz[0][0]<=maior);    
+ }
+ 
+diff --git a/loops/matrix_unsafe.c b/loops/matrix_unsafe.c
+index 37f5dc1..c32dbbf 100644
+--- a/loops/matrix_unsafe.c
++++ b/loops/matrix_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ int __VERIFIER_nondet_int();
+ 
+@@ -22,6 +27,6 @@ main()
+     
+   for(j=0;j<N_COL;j++)
+     for(k=0;k<N_LIN;k++)
+-      assert(matriz[j][k]<maior);    
++      VER_assert(matriz[j][k]<maior);    
+ }
+ 
+diff --git a/loops/n.c11_safe.c b/loops/n.c11_safe.c
+index 2fe40d7..bfdb910 100644
+--- a/loops/n.c11_safe.c
++++ b/loops/n.c11_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -17,7 +22,7 @@ int main(){
+ 
+       len++;
+    }
+-   assert(len>=0 && len<5);
++   VER_assert(len>=0 && len<5);
+    return 1;
+ 
+    
+diff --git a/loops/n.c24_safe.c b/loops/n.c24_safe.c
+index 9addb3c..013e3e2 100644
+--- a/loops/n.c24_safe.c
++++ b/loops/n.c24_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #include <string.h>
+ int __VERIFIER_nondet_int();
+ 
+@@ -72,7 +77,7 @@ int main(){
+             }
+       }
+    }
+-   assert(offset>=0 && offset<=1000);
++   VER_assert(offset>=0 && offset<=1000);
+    return 1;
+ }
+ 
+diff --git a/loops/nec11_unsafe.c b/loops/nec11_unsafe.c
+index 5d2c953..ea0bb6e 100644
+--- a/loops/nec11_unsafe.c
++++ b/loops/nec11_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -17,7 +22,7 @@ int main(){
+ 
+       len++;
+    }
+-   assert(len==5);
++   VER_assert(len==5);
+    return 1;
+ 
+    
+diff --git a/loops/nec20_unsafe.c b/loops/nec20_unsafe.c
+index 9dfebd5..5e4f5b2 100644
+--- a/loops/nec20_unsafe.c
++++ b/loops/nec20_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int b;
+ _Bool __VERIFIER_nondet_bool();
+ _Bool k=__VERIFIER_nondet_bool();
+@@ -20,7 +25,7 @@ int main(){
+ 
+    a[i]=0;
+    a[j]=0;
+-   assert(j<1025);
++   VER_assert(j<1025);
+    a[b]=0;
+    if (b >= 0 && b < 1023)
+       a[b]=1;
+diff --git a/loops/nec40_safe.c b/loops/nec40_safe.c
+index 58bf57a..d20d9f3 100644
+--- a/loops/nec40_safe.c
++++ b/loops/nec40_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+   char x[100], y[100];
+@@ -15,5 +20,5 @@ void main() {
+   
+   if(k >= 0 && k < i)
+     if(y[k] != 0)
+-      {assert(0);}
++      {VER_assert(0);}
+ }
+diff --git a/loops/string_safe.c b/loops/string_safe.c
+index 9335c44..b214dec 100644
+--- a/loops/string_safe.c
++++ b/loops/string_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define MAX 5
+ 
+ char nondet_char();
+@@ -43,6 +48,6 @@ main()
+ 
+   found = (j>nc_B-1);
+   
+-  assert(found == 0 || found == 1);
++  VER_assert(found == 0 || found == 1);
+ }
+ 
+diff --git a/loops/string_unsafe.c b/loops/string_unsafe.c
+index ae4941b..f1b4254 100644
+--- a/loops/string_unsafe.c
++++ b/loops/string_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ #define MAX 5
+ 
+@@ -45,7 +50,7 @@ main()
+ 
+   found = (j>nc_B-1)<<i;
+   
+-  assert(found == 0 || found == 1);
++  VER_assert(found == 0 || found == 1);
+ 
+ }
+ 
+diff --git a/loops/sum01_bug02_sum01_bug02_base.case_unsafe.c b/loops/sum01_bug02_sum01_bug02_base.case_unsafe.c
+index a6e354f..8c839d3 100644
+--- a/loops/sum01_bug02_sum01_bug02_base.case_unsafe.c
++++ b/loops/sum01_bug02_sum01_bug02_base.case_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ unsigned int nondet_uint();
+ int main() { 
+@@ -6,5 +11,5 @@ int main() {
+     sn = sn + a;
+     if (i==4) sn=-10;
+   }
+-  assert(sn==n*a || sn == 0);
++  VER_assert(sn==n*a || sn == 0);
+ }
+diff --git a/loops/sum01_bug02_unsafe.c b/loops/sum01_bug02_unsafe.c
+index 0d7eb7b..0119e68 100644
+--- a/loops/sum01_bug02_unsafe.c
++++ b/loops/sum01_bug02_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ unsigned int nondet_uint();
+ int main() { 
+@@ -7,5 +12,5 @@ int main() {
+     sn = sn + a;
+     j--;
+   }
+-  assert(sn==n*a || sn == 0);
++  VER_assert(sn==n*a || sn == 0);
+ }
+diff --git a/loops/sum01_safe.c b/loops/sum01_safe.c
+index 89d3703..3d9100f 100644
+--- a/loops/sum01_safe.c
++++ b/loops/sum01_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ int nondet_int();
+ int main() { 
+@@ -5,5 +10,5 @@ int main() {
+   for(i=1; i<=n; i++) {
+     sn = sn + a;
+   }
+-  assert(sn==n*a || sn == 0);
++  VER_assert(sn==n*a || sn == 0);
+ }
+diff --git a/loops/sum01_unsafe.c b/loops/sum01_unsafe.c
+index 67c9df9..7a5e135 100644
+--- a/loops/sum01_unsafe.c
++++ b/loops/sum01_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ unsigned int nondet_uint();
+ int main() { 
+@@ -6,5 +11,5 @@ int main() {
+     if (i<10)
+     sn = sn + a;
+   }
+-  assert(sn==n*a || sn == 0);
++  VER_assert(sn==n*a || sn == 0);
+ }
+diff --git a/loops/sum02_safe.c b/loops/sum02_safe.c
+index c582c13..89012c2 100644
+--- a/loops/sum02_safe.c
++++ b/loops/sum02_safe.c
+@@ -1,8 +1,13 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int nondet_uint();
+ int main() { 
+   unsigned int i, n=nondet_uint(), sn=0;
+   for(i=0; i<=n; i++) {
+     sn = sn + i;
+   }
+-  assert(sn==(n*(n+1))/2 || sn == 0);
++  VER_assert(sn==(n*(n+1))/2 || sn == 0);
+ }
+diff --git a/loops/sum03_safe.c b/loops/sum03_safe.c
+index b782dd7..9182f08 100644
+--- a/loops/sum03_safe.c
++++ b/loops/sum03_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ unsigned int __VERIFIER_nondet_uint();
+ 
+@@ -9,7 +14,7 @@ int main() {
+   while(1){
+     sn = sn + a;
+     x++;
+-    assert(sn==x*a || sn == 0);
++    VER_assert(sn==x*a || sn == 0);
+   }
+ }
+ 
+diff --git a/loops/sum03_unsafe.c b/loops/sum03_unsafe.c
+index 1f5c5b6..04fca90 100644
+--- a/loops/sum03_unsafe.c
++++ b/loops/sum03_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ int nondet_int();
+ unsigned int nondet_uint();
+@@ -12,7 +17,7 @@ int main() {
+     if (x<10)
+       sn = sn + a;
+     x++;
+-    assert(sn==x*a || sn == 0);
++    VER_assert(sn==x*a || sn == 0);
+   }
+ }
+ 
+diff --git a/loops/sum04_safe.c b/loops/sum04_safe.c
+index 400a05c..f8b06ad 100644
+--- a/loops/sum04_safe.c
++++ b/loops/sum04_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ #define SIZE 8
+ unsigned int nondet_uint();
+@@ -6,6 +11,6 @@ int main() {
+   for(i=1; i<=SIZE; i++) {
+     sn = sn + a;
+   }
+-  assert(sn==SIZE*a || sn == 0);
++  VER_assert(sn==SIZE*a || sn == 0);
+ }
+ 
+diff --git a/loops/sum04_unsafe.c b/loops/sum04_unsafe.c
+index 942f676..c7067bd 100644
+--- a/loops/sum04_unsafe.c
++++ b/loops/sum04_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define a (2)
+ #define SIZE 8
+ unsigned int nondet_uint();
+@@ -7,6 +12,6 @@ int main() {
+     if (i<4)
+     sn = sn + a;
+   }
+-  assert(sn==SIZE*a || sn == 0);
++  VER_assert(sn==SIZE*a || sn == 0);
+ }
+ 
+diff --git a/loops/sum_array_safe.c b/loops/sum_array_safe.c
+index 5a8cc30..bcf772b 100644
+--- a/loops/sum_array_safe.c
++++ b/loops/sum_array_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int M = __VERIFIER_nondet_uint();
+ 
+@@ -16,6 +21,6 @@ main()
+      C[i]=A[i]+B[i];
+   
+   for(i=0;i<M;i++)
+-     assert(C[i]==A[i]+B[i]);
++     VER_assert(C[i]==A[i]+B[i]);
+ }
+ 
+diff --git a/loops/sum_array_unsafe.c b/loops/sum_array_unsafe.c
+index d7679b3..0a3b6ee 100644
+--- a/loops/sum_array_unsafe.c
++++ b/loops/sum_array_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ unsigned int M = __VERIFIER_nondet_uint();
+ 
+@@ -16,6 +21,6 @@ main()
+      C[i]=A[i]+B[i];
+   
+   for(i=0;i<M;i++)
+-     assert(C[i]==A[i]-B[i]);
++     VER_assert(C[i]==A[i]-B[i]);
+ }
+ 
+diff --git a/loops/terminator_01_safe.c b/loops/terminator_01_safe.c
+index c0f1d7b..32435e1 100644
+--- a/loops/terminator_01_safe.c
++++ b/loops/terminator_01_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+ int main()
+diff --git a/loops/terminator_01_unsafe.c b/loops/terminator_01_unsafe.c
+index e167d03..2d8695a 100644
+--- a/loops/terminator_01_unsafe.c
++++ b/loops/terminator_01_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ 
+ main()
+@@ -8,6 +13,6 @@ main()
+   while(x<100) {
+    (*p)++;
+   }                       
+-  assert(0);    
++  VER_assert(0);    
+ }
+ 
+diff --git a/loops/terminator_02_safe.c b/loops/terminator_02_safe.c
+index de6eff3..b9280b8 100644
+--- a/loops/terminator_02_safe.c
++++ b/loops/terminator_02_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -22,7 +27,7 @@ main()
+    }
+   }                       
+     
+-  assert(x>=100 || z<=100);
++  VER_assert(x>=100 || z<=100);
+ }
+ 
+ 
+diff --git a/loops/terminator_02_unsafe.c b/loops/terminator_02_unsafe.c
+index 96093ea..fcc1c05 100644
+--- a/loops/terminator_02_unsafe.c
++++ b/loops/terminator_02_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -21,7 +26,7 @@ main()
+    }
+   }                       
+     
+-  assert(0);    
++  VER_assert(0);    
+ }
+ 
+ 
+diff --git a/loops/terminator_03_safe.c b/loops/terminator_03_safe.c
+index ea5ea35..0c80562 100644
+--- a/loops/terminator_03_safe.c
++++ b/loops/terminator_03_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int __VERIFIER_nondet_int();
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -14,7 +19,7 @@ main()
+      }
+   }                
+            
+-  assert(y<=0 || (y>0 && x>=100));    
++  VER_assert(y<=0 || (y>0 && x>=100));    
+ }
+ 
+ 
+diff --git a/loops/terminator_03_unsafe.c b/loops/terminator_03_unsafe.c
+index e737aaf..ebc4cc0 100644
+--- a/loops/terminator_03_unsafe.c
++++ b/loops/terminator_03_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int nondet_int();
+ _Bool nondet_bool();
+ 
+@@ -13,7 +18,7 @@ main()
+       x=x+y;
+      }
+   }                           
+-  assert(y<=0 || (y<0 && x>=100));     
++  VER_assert(y<=0 || (y<0 && x>=100));     
+ }
+ 
+ 
+diff --git a/loops/trex01_safe.c b/loops/trex01_safe.c
+index 36ab71c..8b7ec53 100644
+--- a/loops/trex01_safe.c
++++ b/loops/trex01_safe.c
+@@ -1,10 +1,15 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ _Bool __VERIFIER_nondet_bool();
+ 
+ void f(int d) {
+   int x, y, k, z = 1;
+   L1:
+   while (z < k) { z = 2 * z; }
+-  assert(z>=1);
++  VER_assert(z>=1);
+   L2:
+   while (x > 0 && y > 0) {
+     _Bool c = __VERIFIER_nondet_bool();
+diff --git a/loops/trex01_unsafe.c b/loops/trex01_unsafe.c
+index 67d24cc..1ef8f42 100644
+--- a/loops/trex01_unsafe.c
++++ b/loops/trex01_unsafe.c
+@@ -1,10 +1,15 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ _Bool __VERIFIER_nondet_bool();
+ 
+ void f(int d) {
+   int x, y, k, z = 1;
+   L1:
+   while (z < k) { z = 2 * z; }
+-  assert(z>=2);
++  VER_assert(z>=2);
+   L2:
+   while (x > 0 && y > 0) {
+     _Bool c = __VERIFIER_nondet_bool();
+diff --git a/loops/trex02_safe.c b/loops/trex02_safe.c
+index 6148828..49767fd 100644
+--- a/loops/trex02_safe.c
++++ b/loops/trex02_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ _Bool __VERIFIER_nondet_bool();
+ int __VERIFIER_nondet_int();
+ 
+@@ -14,7 +19,7 @@ int main() {
+     if(c) foo();
+     else foo();
+   }
+-  assert(x<=0);
++  VER_assert(x<=0);
+ }
+ 
+ 
+diff --git a/loops/trex02_unsafe.c b/loops/trex02_unsafe.c
+index 393f5f8..dd5ee31 100644
+--- a/loops/trex02_unsafe.c
++++ b/loops/trex02_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ _Bool __VERIFIER_nondet_bool();
+ int __VERIFIER_nondet_int();
+ 
+@@ -14,7 +19,7 @@ int main() {
+     if(c) foo();
+     else foo();
+   }
+-  assert(x==0);
++  VER_assert(x==0);
+ }
+ 
+ 
+diff --git a/loops/trex03_safe.c b/loops/trex03_safe.c
+index 975144f..90c193a 100644
+--- a/loops/trex03_safe.c
++++ b/loops/trex03_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned int __VERIFIER_nondet_uint();
+ _Bool __VERIFIER_nondet_bool();
+ 
+@@ -16,7 +21,7 @@ int main()
+     c2=__VERIFIER_nondet_bool();
+   }
+ 
+-  assert(x1==0 || x2==0 || x3==0);
++  VER_assert(x1==0 || x2==0 || x3==0);
+   return 0;
+ }
+ 
+diff --git a/loops/trex03_unsafe.c b/loops/trex03_unsafe.c
+index 2e8687e..e185cc9 100644
+--- a/loops/trex03_unsafe.c
++++ b/loops/trex03_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define bool int
+ 
+ unsigned int __VERIFIER_nondet_uint()
+@@ -27,7 +32,7 @@ int main()
+     c2=nondet_bool();
+   }
+ 
+-  assert(x1==0 && x2==0 && x3==0);
++  VER_assert(x1==0 && x2==0 && x3==0);
+   return 0;
+ }
+ 
+diff --git a/loops/trex04_safe.c b/loops/trex04_safe.c
+index cd9d381..64191de 100644
+--- a/loops/trex04_safe.c
++++ b/loops/trex04_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define bool int
+ bool nondet_bool()
+ {
+@@ -33,6 +38,6 @@ int main()
+     x=x-d;
+   }
+ 
+-  assert(x<=0);
++  VER_assert(x<=0);
+ }
+ 
+diff --git a/loops/veris.c_NetBSD-libc__loop_safe.c b/loops/veris.c_NetBSD-libc__loop_safe.c
+index d854789..c53fc3c 100644
+--- a/loops/veris.c_NetBSD-libc__loop_safe.c
++++ b/loops/veris.c_NetBSD-libc__loop_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ typedef int Char;
+ #define MAXPATHLEN 1
+ 
+@@ -9,7 +14,7 @@ int glob2 (Char *pathbuf, Char *pathlim)
+ 
+   for (p = pathbuf; p <= pathlim; p++) {
+     /* BAD */
+-    assert(p<=tmp);
++    VER_assert(p<=tmp);
+     *p = 1;
+   }
+ 
+diff --git a/loops/veris.c_OpenSER__cases1_stripFullBoth_arr_safe.c b/loops/veris.c_OpenSER__cases1_stripFullBoth_arr_safe.c
+index 82069f8..99112e2 100644
+--- a/loops/veris.c_OpenSER__cases1_stripFullBoth_arr_safe.c
++++ b/loops/veris.c_OpenSER__cases1_stripFullBoth_arr_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #ifndef _BASE_H
+ #define _BASE_H
+ 
+diff --git a/loops/veris.c_sendmail__tTflag_arr_one_loop_safe.c b/loops/veris.c_sendmail__tTflag_arr_one_loop_safe.c
+index b610fa6..08ce33d 100644
+--- a/loops/veris.c_sendmail__tTflag_arr_one_loop_safe.c
++++ b/loops/veris.c_sendmail__tTflag_arr_one_loop_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int main (void)
+ {
+   char in[11]; // = "3277192070";
+@@ -18,7 +23,7 @@ int main (void)
+     c = in[idx_in];
+   }
+   /* OK */
+-  assert (i >= 0);
++  VER_assert (i >= 0);
+   return 0;
+ }
+ 
+diff --git a/loops/verisec_NetBSD-libc__loop_unsafe.c b/loops/verisec_NetBSD-libc__loop_unsafe.c
+index 4a7f67a..19c8634 100644
+--- a/loops/verisec_NetBSD-libc__loop_unsafe.c
++++ b/loops/verisec_NetBSD-libc__loop_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ typedef int Char;
+ #define MAXPATHLEN 1
+ 
+@@ -9,7 +14,7 @@ int glob2 (Char *pathbuf, Char *pathlim)
+ 
+   for (p = pathbuf; p <= pathlim; p++) {
+     /* BAD */
+-    assert(p<=tmp);
++    VER_assert(p<=tmp);
+     *p = 1;
+   }
+ 
+diff --git a/loops/verisec_OpenSER__cases1_stripFullBoth_arr_unsafe.c b/loops/verisec_OpenSER__cases1_stripFullBoth_arr_unsafe.c
+index c87e48c..664b5fb 100644
+--- a/loops/verisec_OpenSER__cases1_stripFullBoth_arr_unsafe.c
++++ b/loops/verisec_OpenSER__cases1_stripFullBoth_arr_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #ifndef _BASE_H
+ #define _BASE_H
+ 
+@@ -159,7 +164,7 @@ static int parse_expression_list(char *str)
+         /* valid word */
+         /* BAD */
+         r_strncpy(str2, str+start, j-start+1);
+-        assert(j - start + 1 < 2);
++        VER_assert(j - start + 1 < 2);
+         str2[j-start+1] = EOS;
+       } else {
+         /* parsing error */
+diff --git a/loops/verisec_sendmail__tTflag_arr_one_loop_unsafe.c b/loops/verisec_sendmail__tTflag_arr_one_loop_unsafe.c
+index 2931990..93e0fb2 100644
+--- a/loops/verisec_sendmail__tTflag_arr_one_loop_unsafe.c
++++ b/loops/verisec_sendmail__tTflag_arr_one_loop_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ unsigned char nondet_uchar();
+ int nondet_int();
+ int main (void)
+@@ -20,7 +25,7 @@ int main (void)
+     c = in[idx_in];
+   }
+   /* BAD */
+-  assert (i >= 0);
++  VER_assert (i >= 0);
+   return 0;
+ }
+ 
+diff --git a/loops/vogal_safe.c b/loops/vogal_safe.c
+index 1d20006..5e8c126 100644
+--- a/loops/vogal_safe.c
++++ b/loops/vogal_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define MAX 5
+ 
+ char __VERIFIER_nondet_char();
+@@ -32,6 +37,6 @@ main(void)
+     }       
+     i++;       
+   }    
+-  assert(cont_aux==cont);                          
++  VER_assert(cont_aux==cont);                          
+ }
+ 
+diff --git a/loops/vogal_unsafe.c b/loops/vogal_unsafe.c
+index ddd5676..db0c7eb 100644
+--- a/loops/vogal_unsafe.c
++++ b/loops/vogal_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ #define MAX 10
+ 
+ char nondet_char();
+@@ -33,5 +38,5 @@ main(void)
+     }       
+     i++;       
+   }    
+-  assert(cont_aux==cont);                          
++  VER_assert(cont_aux==cont);                          
+ }
+diff --git a/loops/while_infinite_loop_1_safe.c b/loops/while_infinite_loop_1_safe.c
+index 458f841..a1cbe85 100644
+--- a/loops/while_infinite_loop_1_safe.c
++++ b/loops/while_infinite_loop_1_safe.c
+@@ -1,11 +1,16 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int main() {
+   int x=0;
+ 
+   while(1)
+   {
+-    assert(x==0);    
++    VER_assert(x==0);    
+   }
+ 
+-  assert(x!=0);
++  VER_assert(x!=0);
+ }
+diff --git a/loops/while_infinite_loop_2_safe.c b/loops/while_infinite_loop_2_safe.c
+index aa48120..e87d172 100644
+--- a/loops/while_infinite_loop_2_safe.c
++++ b/loops/while_infinite_loop_2_safe.c
+@@ -1,10 +1,15 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ int main() {
+   int x=0;
+ 
+   while(1)
+   {
+-    assert(x==0);    
++    VER_assert(x==0);    
+   }
+ 
+-  assert(x==0);
++  VER_assert(x==0);
+ }
+diff --git a/loops/while_infinite_loop_3_safe.c b/loops/while_infinite_loop_3_safe.c
+index d5a094e..18e7503 100644
+--- a/loops/while_infinite_loop_3_safe.c
++++ b/loops/while_infinite_loop_3_safe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int x=0;
+ 
+@@ -16,10 +21,10 @@ int main() {
+   while(1)
+   {
+     eval();
+-    assert(x==0);    
++    VER_assert(x==0);    
+   }
+ 
+-  assert(x!=0);
++  VER_assert(x!=0);
+ 
+   return 0;
+ }
+diff --git a/loops/while_infinite_loop_4_unsafe.c b/loops/while_infinite_loop_4_unsafe.c
+index 38ae524..d1148d5 100644
+--- a/loops/while_infinite_loop_4_unsafe.c
++++ b/loops/while_infinite_loop_4_unsafe.c
+@@ -1,3 +1,8 @@
++VER_assert(int cond)
++{
++if (cond) return;
++ERROR: goto ERROR;
++}
+ 
+ int x=0;
+ 
+@@ -16,10 +21,10 @@ int main() {
+   while(1)
+   {
+     eval();
+-    assert(x==0);    
++    VER_assert(x==0);    
+   }
+ 
+-  assert(x==0);
++  VER_assert(x==0);
+ 
+   return 0;
+ }
+-- 
+1.7.12
+
