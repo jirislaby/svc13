@@ -27,12 +27,12 @@ build_one() {
 	echo "$FILE => $OUT" >&2
 	clang -c -g -emit-llvm -include /usr/include/assert.h $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
 	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" || exit 1
-	llvm-link -o "${FILE%.c}.linked" "${FILE%.c}.prepared" "$LIBo" || exit 1
 	if [ -n "$SLICE" ]; then
-		opt -load LLVMSlicer.so -slice-inter "${FILE%.c}.linked" -o "$OUT" || exit 1
+		opt -load LLVMSlicer.so -slice-inter "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || exit 1
 	else
-		mv "${FILE%.c}.linked" "$OUT"
+		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
 	fi
+	llvm-link -o "$OUT" "${FILE%.c}.sliced" "$LIBo" || exit 1
 	rm -f "${FILE%.c}.linked" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
 }
 
