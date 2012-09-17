@@ -18,6 +18,7 @@ type __VERIFIER_nondet_ ## type(void)			\
 MAKE_NONDET(char);
 MAKE_NONDET(short);
 MAKE_NONDET(int);
+MAKE_NONDET(long);
 
 #undef MAKE_NONDET
 
@@ -30,5 +31,6 @@ type nondet_ ## type(void)				\
 MAKE_NONDET(char);
 MAKE_NONDET(short);
 MAKE_NONDET(int);
+MAKE_NONDET(long);
 
 #undef MAKE_NONDET
