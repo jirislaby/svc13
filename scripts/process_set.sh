@@ -33,7 +33,7 @@ build_one() {
 		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
 	fi
 	llvm-link -o "$OUT" "${FILE%.c}.sliced" "$LIBo" || exit 1
-	rm -f "${FILE%.c}.linked" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
+	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
 }
 
 for FILE in `cat "$SET"`; do
