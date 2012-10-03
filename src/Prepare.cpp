@@ -66,7 +66,8 @@ bool Prepare::runOnFunction(Function &F) {
 	  name.equals("memcpy") || name.equals("memmove"))
 	continue;
 
-      if (name.startswith("__VERIFIER_") || name.equals("nondet_int")) {
+      if (name.startswith("__VERIFIER_") || name.equals("nondet_int") ||
+		      name.equals("klee_int")) {
 //	errs() << "TADY   " << name << "\n";
 	continue;
       }
