@@ -28,7 +28,7 @@ build_one() {
 	clang -c -g -emit-llvm -include /usr/include/assert.h $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
 	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" || exit 1
 	if [ -n "$SLICE" ]; then
-		opt -load LLVMSlicer.so -slice-inter "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || exit 1
+		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || exit 1
 	else
 		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
 	fi
