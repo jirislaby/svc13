@@ -8,6 +8,7 @@ fi
 
 for FILE in $FILES; do
 	sed -i	-e '
+	s@__inline_*@@;
 	s@^long __builtin_expect(long val , long res ) $@long s__builtin_expect(long val , long res ) @;
 	s@^void assert(int i ) $@void sassert(int i)@;
 	s@^void assert(int cond) {$@void sassert(int cond) {@;
