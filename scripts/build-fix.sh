@@ -15,6 +15,7 @@ for FILE in `cat "$SET"`; do
 	s@^void __builtin_va_end(__builtin_va_list *) ;$@@;
 	s@^void \*__builtin_alloca(unsigned [longit]* *) ;$@@;
 	s@__builtin_va_start(\(.*\));@va_start(\1);@;
-	s@\(int __VERIFIER_nondet_int()\) { int x; return x; }@extern \1;@' \
+	s@^\([a-z_ *]* __VERIFIER_nondet_[a-z_]*()\) { [a-z_ *]* [a-z_]*; return [a-z_]*; }@extern \1;@
+	s@^\(int __VERIFIER_nondet_int()\) {$@\1; int bubak() {@' \
 		"$FILE"
 done
