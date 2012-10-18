@@ -1,8 +1,12 @@
 #!/bin/sh
 
-SET=$1
+if echo "$1" | grep -q '\.set$'; then
+	FILES=`cat "$1"`
+else
+	FILES="$1"
+fi
 
-for FILE in `cat "$SET"`; do
+for FILE in $FILES; do
 	sed -i	-e '
 	s@^long __builtin_expect(long val , long res ) $@long s__builtin_expect(long val , long res ) @;
 	s@^void assert(int i ) $@void sassert(int i)@;

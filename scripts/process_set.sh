@@ -1,6 +1,11 @@
 #!/bin/sh
 
-SET=$1
+if echo "$1" | grep -q '\.set$'; then
+	FILES=`cat "$1"`
+else
+	FILES="$1"
+fi
+
 
 test -z "$CLANG_WARNS" && CLANG_WARNS=-w
 test -z "$KLEE" && KLEE=klee
@@ -36,7 +41,7 @@ build_one() {
 	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
 }
 
-for FILE in `cat "$SET"`; do
+for FILE in $FILES; do
 	OUT=`build_one "$FILE"` || exit 1
 #	echo "$KLEE $KLEE_PARAMS: $FILE" >&2
 	$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" "$OUT" || exit 1
