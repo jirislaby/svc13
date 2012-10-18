@@ -34,3 +34,8 @@ MAKE_NONDET(int);
 MAKE_NONDET(long);
 
 #undef MAKE_NONDET
+
+void *__VERIFIER_nondet_pointer()
+{
+	return (void *)__VERIFIER_nondet_long();
+}
