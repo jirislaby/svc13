@@ -6,6 +6,7 @@ for FILE in `cat "$SET"`; do
 	sed -i	-e '
 	s@^long __builtin_expect(long val , long res ) $@long s__builtin_expect(long val , long res ) @;
 	s@^void assert(int i ) $@void sassert(int i)@;
+	s@^void assert(int cond) {$@void sassert(int cond) {@;
 	s@^void \*__builtin_memcpy(void \* , void[ const]*\* , unsigned long *) *;$@@;
 	s@^unsigned long __builtin_object_size(void \* , int *) ;$@@;
 	s@^long __builtin_expect(long , long ) ;$@@;
