@@ -6,19 +6,17 @@ else
 	FILES="$1"
 fi
 
-
 test -z "$CLANG_WARNS" && CLANG_WARNS=-w
 test -z "$KLEE" && KLEE=klee
 test -z "$KLEE_PARAMS" && KLEE_PARAMS="-max-stp-time=5 -max-time=600"
 test -z "$LIB" && LIB="`dirname $0`/../lib/lib.c"
+test -z "$LIBo" && LIBo="${LIB%.c}.o"
 test -n "$KLEE_DIR" && LIB_CFLAGS="$LIB_CFLAGS -I${KLEE_DIR}/include"
 
 if [ ! -f "$LIB" ]; then
 	echo "no lib at '$LIB' => no cookie for you"
 	exit 1
 fi
-
-LIBo="${LIB%.c}.o"
 
 if [ ! -f "$LIBo" -o "$LIBo" -ot "$LIB" ]; then
 	clang -Wall -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1

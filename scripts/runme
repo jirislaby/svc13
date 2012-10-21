@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#set -xx
+
+if [ -z "$1" ]; then
+	echo no input file >&2
+	exit 1
+fi
+
+if ! which clang >/dev/null 2>&1; then
+	echo CLANG not found >&2
+	exit 1
+fi
+
+DIR="`dirname $0`"
+FILE="$1"
+
+export KLEE=/bin/true
+export LIB="$DIR/lib.c"
+export LIBo="/$TMPDIR/lib.o"
+export LIB_CFLAGS="-I$DIR/klee/include"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR"
+export SLICE=1
+$DIR/process_set.sh "$FILE" >"${FILE%.c}.proc-log" 2>&1 || exit 1
+rm -rf "$FILE-klee-out"
+$DIR/klee/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" >"${FILE%.c}.log" 2>&1
+KLEE_RESULT=`$DIR/klee-log-parser.sh "${FILE%.c}.log"`
+if echo "$KLEE_RESULT" | grep -q '^[ ]*B'; then
+	echo TRUE
+elif echo "$KLEE_RESULT" | grep '^ '; then
+	echo FALSE
+else
+	echo UNKNOWN
+fi
