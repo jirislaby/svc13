@@ -21,7 +21,9 @@ export LIBo="/$TMPDIR/lib.o"
 export LIB_CFLAGS="-I$DIR/klee/include"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR"
 export SLICE=1
-$DIR/process_set.sh "$FILE" >"${FILE%.c}.proc-log" 2>&1 || exit 1
+$DIR/instrument.sh "$FILE" >"${FILE%.c}.proc-log" 2>&1
+$DIR/build-fix.sh "$FILE" >>"${FILE%.c}.proc-log" 2>&1
+$DIR/process_set.sh "$FILE" >>"${FILE%.c}.proc-log" 2>&1 || exit 1
 rm -rf "$FILE-klee-out"
 $DIR/klee/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" >"${FILE%.c}.log" 2>&1
 KLEE_RESULT=`$DIR/klee-log-parser.sh "${FILE%.c}.log"`
