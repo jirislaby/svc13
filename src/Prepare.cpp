@@ -101,11 +101,13 @@ void Prepare::findInitFuns(Module &M) {
 
 bool Prepare::runOnModule(Module &M) {
   static const char *del_body[] = {
+    "kzalloc",
     "nondet_int",
     "__VERIFIER_assume",
     "__VERIFIER_nondet_char",
     "__VERIFIER_nondet_short",
     "__VERIFIER_nondet_int",
+    "__VERIFIER_nondet_long",
     NULL
   };
   LLVMContext &C = M.getContext();
