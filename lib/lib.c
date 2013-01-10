@@ -35,9 +35,39 @@ MAKE_NONDET(long);
 
 #undef MAKE_NONDET
 
+#define MAKE_NONDET(type)				\
+type __VERIFIER_nondet_u ## type(void)			\
+{							\
+	return __VERIFIER_nondet_ ## type();		\
+}
+
+MAKE_NONDET(char);
+MAKE_NONDET(short);
+MAKE_NONDET(int);
+MAKE_NONDET(long);
+
+#undef MAKE_NONDET
+
 void *__VERIFIER_nondet_pointer()
 {
 	return (void *)__VERIFIER_nondet_long();
+}
+
+/* these are crippled */
+
+unsigned int __VERIFIER_nondet_u32()
+{
+	return __VERIFIER_nondet_uint();
+}
+
+unsigned int __VERIFIER_nondet_unsigned()
+{
+	return __VERIFIER_nondet_uint();
+}
+
+char *__VERIFIER_nondet_pchar()
+{
+	return __VERIFIER_nondet_pointer();
 }
 
 void *kzalloc(int size, int gfp)
