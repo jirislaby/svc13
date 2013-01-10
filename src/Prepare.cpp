@@ -63,7 +63,8 @@ bool Prepare::runOnFunction(Function &F) {
 	  name.equals("swprintf") ||
 	  name.equals("malloc") || name.equals("free") ||
 	  name.equals("memset") || name.equals("memcmp") ||
-	  name.equals("memcpy") || name.equals("memmove"))
+	  name.equals("memcpy") || name.equals("memmove") ||
+	  name.equals("kzalloc"))
 	continue;
 
       if (name.startswith("__VERIFIER_") || name.equals("nondet_int") ||

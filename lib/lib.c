@@ -39,3 +39,9 @@ void *__VERIFIER_nondet_pointer()
 {
 	return (void *)__VERIFIER_nondet_long();
 }
+
+void *kzalloc(int size, int gfp)
+{
+	extern void *malloc(size_t size);
+	return malloc(size);
+}
