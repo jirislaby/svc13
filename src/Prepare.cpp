@@ -104,10 +104,18 @@ bool Prepare::runOnModule(Module &M) {
     "kzalloc",
     "nondet_int",
     "__VERIFIER_assume",
+    "__VERIFIER_nondet_pointer",
+    "__VERIFIER_nondet_pchar",
     "__VERIFIER_nondet_char",
     "__VERIFIER_nondet_short",
     "__VERIFIER_nondet_int",
     "__VERIFIER_nondet_long",
+    "__VERIFIER_nondet_uchar",
+    "__VERIFIER_nondet_ushort",
+    "__VERIFIER_nondet_uint",
+    "__VERIFIER_nondet_ulong",
+    "__VERIFIER_nondet_unsigned",
+    "__VERIFIER_nondet_u32",
     NULL
   };
   LLVMContext &C = M.getContext();
