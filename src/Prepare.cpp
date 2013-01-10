@@ -128,16 +128,14 @@ bool Prepare::runOnModule(Module &M) {
     }
   }
 
-#if 0
-  for (Module::const_global_iterator I = M.global_begin(), E = M.global_end();
+  for (Module::global_iterator I = M.global_begin(), E = M.global_end();
       I != E; ++I) {
-    const GlobalVariable *GV = &*I;
-    if (GV->isConstant())
+    GlobalVariable *GV = &*I;
+    if (GV->isConstant() || GV->hasInitializer())
       continue;
-    GV->dump();
-//    errs() << "";
+    GV->setInitializer(Constant::getNullValue(GV->getType()->getElementType()));
+    errs() << "making " << GV->getName() << " non-extern\n";
   }
-#endif
 
   for (llvm::Module::iterator I = M.begin(), E = M.end(); I != E; ++I) {
     Function &F = *I;
