@@ -11,6 +11,7 @@ test -z "$KLEE" && KLEE=klee
 test -z "$KLEE_PARAMS" && KLEE_PARAMS="-max-stp-time=5 -max-time=600"
 test -z "$LIB" && LIB="`dirname $0`/../lib/lib.c"
 test -z "$LIBo" && LIBo="${LIB%.c}.o"
+test -z "$MFLAG" && MFLAG=-m32
 test -n "$KLEE_DIR" && LIB_CFLAGS="$LIB_CFLAGS -I${KLEE_DIR}/include"
 
 if [ ! -f "$LIB" ]; then
@@ -19,7 +20,7 @@ if [ ! -f "$LIB" ]; then
 fi
 
 if [ ! -f "$LIBo" -o "$LIBo" -ot "$LIB" ]; then
-	clang -Wall -m64 -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
+	clang -Wall "$MFLAG" -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
 fi
 
 build_one() {
@@ -28,10 +29,10 @@ build_one() {
 
 	test -f "$OUT" -a "$OUT" -nt "$FILE" -a "$OUT" -nt "$LIBo" && return
 	echo "$FILE => $OUT" >&2
-	clang -c -g -x c -m64 -emit-llvm -include /usr/include/assert.h $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
+	clang -c -g -x c "$MFLAG" -emit-llvm -include /usr/include/assert.h $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
 	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" || exit 1
 	if [ -n "$SLICE" ]; then
-		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || exit 1
+		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || return
 	else
 		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
 	fi
