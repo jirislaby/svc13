@@ -74,7 +74,9 @@ bool Prepare::runOnFunction(Function &F) {
       }
 
       if (callee->isDeclaration()) {
+#ifdef DEBUG_CALLS
 	errs() << "removing call to '" << name << "'\n";
+#endif
 	if (!CI->getType()->isVoidTy()) {
 //	  CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
 	  CI->replaceAllUsesWith(Constant::getNullValue(CI->getType()));
