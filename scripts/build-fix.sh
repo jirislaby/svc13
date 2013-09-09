@@ -17,7 +17,9 @@ for FILE in $FILES; do
 	s@^long __builtin_expect(long , long ) ;$@@;
 	s@^void __builtin_prefetch(void const *\* *, \.\.\.) ;@@;
 	s@^void \*__builtin_alloca(unsigned [longit]* *) ;$@@;
-	s@^\([a-z_ *]* __VERIFIER_nondet_[a-z_]*()\) { [a-z_ *]* [a-z_]*; return [a-z_]*; }@extern \1;@
+	s@^\([a-z_ *]* __VERIFIER_nondet_[a-z_]*()\) { [a-z_ *]* [a-z_]*; return [a-z_]*; }@extern \1;@;
+	s@__builtin_va_start(\(.*\))@va_start(\1)@;
+	s@__builtin_va_end(\(.*\))@va_end(\1)@;
 	s@^\(int __VERIFIER_nondet_int()\) {$@\1; int bubak() {@' \
 		"$FILE"
 done
