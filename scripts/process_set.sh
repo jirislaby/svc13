@@ -43,10 +43,10 @@ build_one() {
 	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" 2>"${FILE%.c}.prepare.log" || exit 1
 	cat "${FILE%.c}.prepare.log" >&2
 
-	grep -q 'Prepare: call to .* is unsupported' "${FILE%.c}.prepare.log"
-	FOUND=$?
-	rm -f "${FILE%.c}.prepare.log" # remove before we exit
-	if [ $FOUND -eq 0 ]; then
+	if grep -q 'Prepare: call to .* is unsupported' "${FILE%.c}.prepare.log"; then
+		# remove before exit
+		rm -f "${FILE%.c}.prepared" "${FILE%.c}.prepare.log"
+
 		echo "$FILE UNKNOWN"
 		if [ "x$EXIT_ON_UNKNOWN" = "x1" ]; then
 			exit 2
@@ -62,7 +62,7 @@ build_one() {
 	fi
 
 	llvm-link -o "$OUT" "${FILE%.c}.sliced" "$LIBo" || exit 1
-	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
+	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.prepare.log" "${FILE%.c}.llvm"
 }
 
 if [ "`ls "$FILES" | wc -l`" -eq 1 ]; then
