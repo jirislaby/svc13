@@ -79,7 +79,8 @@ bool Prepare::runOnFunction(Function &F) {
       if (CI->isInlineAsm())
         continue;
 
-      Function *callee = CI->getCalledFunction();
+      const Value *val = CI->getCalledValue()->stripPointerCasts();
+      const Function *callee = dyn_cast<Function>(val);
       if (!callee || callee->isIntrinsic())
 	continue;
 
