@@ -24,6 +24,7 @@ endif(LLVM_BUILD_PATH)
 
 add_subdirectory(src)
 add_subdirectory(lib)
+add_subdirectory(include)
 add_subdirectory(scripts)
 
 add_custom_target(
