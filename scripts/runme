@@ -30,6 +30,10 @@
 #           runme
 #           VERSIONS
 
+if [ "x$DEBUG" != "x" ]; then
+	set -xx
+fi
+
 result()
 {
 	echo $1
@@ -48,6 +52,7 @@ error()
 	# dump log file on error in debugging mode
 	if [ "x$DEBUG" != "x" -a "x$LOG_FILE" != "x" ]; then
 		cat "$LOG_FILE"
+		echo "===== EOF"
 	fi
 
 	result "ERROR" 1
@@ -92,7 +97,12 @@ export PATH="$DIR/bin:$PATH"
 
 $DIR/instrument.sh "$FILE" >"$LOG_FILE" 2>&1
 $DIR/build-fix.sh "$FILE" >>"$LOG_FILE" 2>&1
-$DIR/process_set.sh "$FILE" >>"$LOG_FILE" 2>&1 || error
+$DIR/process_set.sh "$FILE" >>"$LOG_FILE" 2>&1
+case $? in
+	0) ;;
+	2) result UNKNOWN ;;
+	*) error ;;
+esac
 
 rm -rf "$FILE-klee-out"
 

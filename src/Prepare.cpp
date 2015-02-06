@@ -39,7 +39,36 @@ namespace {
 static RegisterPass<Prepare> X("prepare", "Prepares the code for svcomp");
 char Prepare::ID;
 
+static bool array_match(StringRef &name, const char **array)
+{
+  for (const char **curr = array; *curr; curr++)
+    if (name.equals(*curr))
+      return true;
+  return false;
+}
+
 bool Prepare::runOnFunction(Function &F) {
+  static const char *leave_calls[] = {
+    "__assert_fail",
+    "exit",
+    "sprintf",
+    "snprintf",
+    "swprintf",
+    "malloc",
+    "free",
+    "memset",
+    "memcmp",
+    "memcpy",
+    "memmove",
+    "kzalloc",
+    NULL
+  };
+
+  static const char *unsupported_calls[] = {
+    "pthread_create",
+    NULL
+  };
+
   bool modified = false;
   const Module *M = F.getParent();
 
@@ -56,16 +85,13 @@ bool Prepare::runOnFunction(Function &F) {
 
       assert(callee->hasName());
       StringRef name = callee->getName();
-
-      if (name.equals("__assert_fail") ||
-	  name.equals("exit") ||
-	  name.equals("sprintf") || name.equals("snprintf") ||
-	  name.equals("swprintf") ||
-	  name.equals("malloc") || name.equals("free") ||
-	  name.equals("memset") || name.equals("memcmp") ||
-	  name.equals("memcpy") || name.equals("memmove") ||
-	  name.equals("kzalloc"))
+      if (array_match(name, leave_calls))
 	continue;
+
+      if (array_match(name, unsupported_calls)) {
+	errs() << "Prepare: call to '" << name << "' is unsupported\n";
+	return modified;
+      }
 
       if (name.startswith("__VERIFIER_") || name.equals("nondet_int") ||
 		      name.equals("klee_int")) {
@@ -74,9 +100,7 @@ bool Prepare::runOnFunction(Function &F) {
       }
 
       if (callee->isDeclaration()) {
-#ifdef DEBUG_CALLS
-	errs() << "removing call to '" << name << "'\n";
-#endif
+	errs() << "Prepare: removing call to '" << name << "' (unsound)\n";
 	if (!CI->getType()->isVoidTy()) {
 //	  CI->replaceAllUsesWith(UndefValue::get(CI->getType()));
 	  CI->replaceAllUsesWith(Constant::getNullValue(CI->getType()));

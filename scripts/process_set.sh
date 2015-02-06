@@ -31,6 +31,8 @@ if [ ! -f "$LIBo" -o "$LIBo" -ot "$LIB" ]; then
 fi
 
 build_one() {
+	FILE="$1"
+	EXIT_ON_UNKNOWN="$2"
 	OUT="${FILE%.c}.o"
 	echo "$OUT"
 
@@ -38,7 +40,20 @@ build_one() {
 	echo "$FILE => $OUT" >&2
 
 	clang -c -g -x c $MFLAG -include $DIR/include/symbiotic.h -emit-llvm $CLANG_WARNS -O0 -o "${FILE%.c}.llvm" "$FILE" || exit 1
-	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" || exit 1
+	opt -load LLVMsvc13.so -prepare "${FILE%.c}.llvm" -o "${FILE%.c}.prepared" 2>"${FILE%.c}.prepare.log" || exit 1
+	cat "${FILE%.c}.prepare.log" >&2
+
+	grep -q 'Prepare: call to .* is unsupported' "${FILE%.c}.prepare.log"
+	FOUND=$?
+	rm -f "${FILE%.c}.prepare.log" # remove before we exit
+	if [ $FOUND -eq 0 ]; then
+		echo "$FILE UNKNOWN"
+		if [ "x$EXIT_ON_UNKNOWN" = "x1" ]; then
+			exit 2
+		else
+			return
+		fi
+	fi
 
 	if [ "x$SLICE" = "x1" ]; then
 		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || return
@@ -50,8 +65,12 @@ build_one() {
 	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.llvm"
 }
 
+if [ "`ls "$FILES" | wc -l`" -eq 1 ]; then
+	EXIT_ON_UNKNOWN=1
+fi
+
 for FILE in $FILES; do
-	OUT=`build_one "$FILE"` || exit 1
+	OUT=`build_one "$FILE" "$EXIT_ON_UNKNOWN"` || exit
 #	echo "$KLEE $KLEE_PARAMS: $FILE" >&2
 	$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" "$OUT" || exit 1
 done
