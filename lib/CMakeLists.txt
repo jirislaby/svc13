@@ -1,0 +1,2 @@
+install(FILES lib.c 
+	DESTINATION ${CMAKE_INSTALL_PREFIX})

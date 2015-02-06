@@ -23,6 +23,8 @@ if (LLVM_BUILD_PATH)
 endif(LLVM_BUILD_PATH)
 
 add_subdirectory(src)
+add_subdirectory(lib)
+add_subdirectory(scripts)
 
 add_custom_target(
 	svcversion ALL sh svc_version.sh
