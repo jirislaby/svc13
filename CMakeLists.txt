@@ -23,3 +23,10 @@ if (LLVM_BUILD_PATH)
 endif(LLVM_BUILD_PATH)
 
 add_subdirectory(src)
+
+add_custom_target(
+	svcversion ALL sh svc_version.sh
+)
+
+install(FILES SVC_SCRIPTS_VERSION
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/)
