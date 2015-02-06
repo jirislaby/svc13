@@ -1,36 +1,118 @@
 #!/bin/bash
 
-#set -xx
+# Since we use regular 'make install' for the sub-projects,
+# the symbiotic directory has a given hierarchy. It's easier
+# to assume this hierarchy in our scripts that to set up
+# autotools to install files as we want to.
+#
+# The directory hierarchy looks like this:
+#
+# symbiotic \
+#           bin     \
+#                   klee
+#                   clang
+#                   llvm-link
+#                   opt
+#                   stp
+#           lib     \
+#                   libstp.so
+#                   LLVMSlicer.so
+#                   LLVMsvc13.so
+#                   libkleeRuntimeIntrinsic.bca
+#                   ....
+#           include \
+#                   symbiotic.h
+#                   klee \
+#                           klee.h
+#           build-fix.sh
+#           instrument.sh
+#           process_set.sh
+#           runme
+#           VERSIONS
+
+result()
+{
+	echo $1
+
+	if [ -z "$2" ]; then
+		exit 0
+	else
+		exit $2
+	fi
+}
+
+LOG_FILE=
+
+error()
+{
+	# dump log file on error in debugging mode
+	if [ "x$DEBUG" != "x" -a "x$LOG_FILE" != "x" ]; then
+		cat "$LOG_FILE"
+	fi
+
+	result "ERROR" 1
+}
+
+debug()
+{
+	if [ "x$DEBUG" != "x" ]; then
+		echo "DBG: $1"
+	fi
+}
 
 if [ -z "$1" ]; then
 	echo no input file >&2
-	exit 1
+	error
 fi
 
 if ! which clang >/dev/null 2>&1; then
 	echo CLANG not found >&2
-	exit 1
+	error
 fi
 
 DIR="`dirname $0`"
 FILE="$1"
 
-export KLEE=/bin/true
+# write logs into separate directory
+if [ -z "$LOGSDIR" ]; then
+	LOGSDIR="logs"
+fi
+mkdir -p "$LOGSDIR"
+
+LOG_FILE=`basename $FILE`
+LOG_FILE="${LOGSDIR}/${LOG_FILE%.c}.proc-log"
+
+export KLEE=$DIR/bin/klee
+export KLEE_RUNTIME_LIBRARY_PATH="$DIR/lib"
 export LIB="$DIR/lib.c"
-export LIBo="/$TMPDIR/lib.o"
-export LIB_CFLAGS="-I$DIR/klee/include"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR"
-export SLICE=1
-$DIR/instrument.sh "$FILE" >"${FILE%.c}.proc-log" 2>&1
-$DIR/build-fix.sh "$FILE" >>"${FILE%.c}.proc-log" 2>&1
-$DIR/process_set.sh "$FILE" >>"${FILE%.c}.proc-log" 2>&1 || exit 1
+export LIBo="$DIR/lib/lib.o"
+export LIB_CFLAGS="-I$DIR/include"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR/lib"
+export PATH="$DIR/bin:$PATH"
+
+$DIR/instrument.sh "$FILE" >"$LOG_FILE" 2>&1
+$DIR/build-fix.sh "$FILE" >>"$LOG_FILE" 2>&1
+$DIR/process_set.sh "$FILE" >>"$LOG_FILE" 2>&1 || error
+
 rm -rf "$FILE-klee-out"
-$DIR/klee/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" >"${FILE%.c}.log" 2>&1
-KLEE_RESULT=`$DIR/klee-log-parser.sh "${FILE%.c}.log"`
-if echo "$KLEE_RESULT" | grep -q '^[ ]*B'; then
-	echo TRUE
-elif echo "$KLEE_RESULT" | grep '^ '; then
-	echo FALSE
+
+KLEE_OUTPUT_FILE="${FILE%.c}.log"
+$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" > $KLEE_OUTPUT_FILE 2>&1
+KLEE_RESULT=`$DIR/klee-log-parser.sh $KLEE_OUTPUT_FILE`
+
+if echo "$KLEE_RESULT" | grep -q '^E'; then
+	debug "$KLEE_RESULT"
+	debug "`cat $KLEE_OUTPUT_FILE`"
+
+	result UNKNOWN
+elif echo "$KLEE_RESULT" | grep -q '^ASSERTIONFAILED'; then
+	debug "$KLEE_RESULT"
+	debug "`cat $KLEE_OUTPUT_FILE`"
+
+	result FALSE
 else
-	echo UNKNOWN
+	debug "$KLEE_RESULT"
+	debug "`cat $KLEE_OUTPUT_FILE`"
+
+	result TRUE
 fi
