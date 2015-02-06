@@ -15,7 +15,7 @@ DIR="`dirname $0`"
 test -z "$CLANG_WARNS" && CLANG_WARNS=-w
 test -z "$KLEE" && KLEE="$DIR/bin/klee"
 test -z "$KLEE_PARAMS" && KLEE_PARAMS="-max-solver-time=5 -max-time=600"
-test -z "$MFLAG" && MFLAG="-64"
+test -z "$MFLAG" && MFLAG="-m32"
 test -z "$LIB" && LIB="$DIR/lib.c"
 test -z "$LIBo" && LIBo="${LIB%.c}.o"
 
