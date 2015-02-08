@@ -71,8 +71,24 @@ if ! which clang >/dev/null 2>&1; then
 	error
 fi
 
+# args processing
 DIR="`dirname $0`"
+PROP=
+while getopts 'p:6' OPT; do
+	case "$OPT" in
+		p) PROP="$OPTARG" ;;
+		6) MFLAG="-m64" ;;
+	esac
+done
+export MFLAG
+shift $(($OPTIND-1))
 FILE="$1"
+
+if [ -n "$PROP" ]; then
+	if ! echo "$PROP" | grep -q 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)'; then
+		result UNKNOWN
+	fi
+fi
 
 # write logs into separate directory
 if [ -z "$LOGSDIR" ]; then
