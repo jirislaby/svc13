@@ -85,7 +85,15 @@ shift $(($OPTIND-1))
 FILE="$1"
 
 if [ -n "$PROP" ]; then
-	if ! echo "$PROP" | grep -q 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)'; then
+	# if PROP is file, read property from file
+	# otherwise assume that PROP is the property
+	if [ -f "$PROP" ]; then
+		CMD=cat
+	else
+		CMD=echo
+	fi
+
+	if ! $CMD "$PROP" | grep -q 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)'; then
 		result UNKNOWN
 	fi
 fi
