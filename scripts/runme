@@ -61,6 +61,27 @@ debug()
 	fi
 }
 
+# return true if first argument represents given property
+check_property()
+{
+	PROP="$1"
+	PATTERN="$2"
+
+	# if PROP is file, read property from file
+	# otherwise assume that PROP is the property
+	if [ -f "$PROP" ]; then
+		CMD=cat
+	else
+		CMD=echo
+	fi
+
+	if $CMD "$PROP" | grep -q "$PATTERN"; then
+		return 0
+	fi
+
+	return 1
+}
+
 if [ -z "$1" ]; then
 	echo no input file >&2
 	error
@@ -84,18 +105,10 @@ export MFLAG
 shift $(($OPTIND-1))
 FILE="$1"
 
-if [ -n "$PROP" ]; then
-	# if PROP is file, read property from file
-	# otherwise assume that PROP is the property
-	if [ -f "$PROP" ]; then
-		CMD=cat
-	else
-		CMD=echo
-	fi
-
-	if ! $CMD "$PROP" | grep -q 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)'; then
-		result UNKNOWN
-	fi
+if [ -n "$PROP" ] &&
+   (! check_property "$PROP" 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)' && \
+    ! check_property "$PROP" 'CHECK *( *init(main()), *LTL(G *! *label(ERROR)) *)'); then
+	result UNKNOWN
 fi
 
 # write logs into separate directory
