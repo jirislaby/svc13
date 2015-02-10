@@ -19,6 +19,9 @@ test -z "$MFLAG" && MFLAG="-m32"
 test -z "$LIB" && LIB="$DIR/lib.c"
 test -z "$LIBo" && LIBo="${LIB%.c}.o"
 
+# slice by default
+test -z "$SLICE" && SLICE="1"
+
 LIB_CFLAGS="$LIB_CFLAGS -I${DIR}/include"
 
 if [ ! -f "$LIB" ]; then
