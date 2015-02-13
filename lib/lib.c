@@ -32,6 +32,8 @@ MAKE_NONDET(char);
 MAKE_NONDET(short);
 MAKE_NONDET(int);
 MAKE_NONDET(long);
+MAKE_NONDET(float);
+MAKE_NONDET(double);
 MAKE_NONDET(_Bool);
 
 #undef MAKE_NONDET
