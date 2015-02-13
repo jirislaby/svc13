@@ -58,14 +58,15 @@ build_one() {
 		fi
 	fi
 
+	llvm-link -o "${FILE%.c}.linked" "${FILE%.c}.prepared" "$LIBo" || exit 1
+
 	if [ "x$SLICE" = "x1" ]; then
-		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || return
+		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.linked" -o "$OUT" || exit 1
 	else
-		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
+		mv "${FILE%.c}.linked" "$OUT"
 	fi
 
-	llvm-link -o "$OUT" "${FILE%.c}.sliced" "$LIBo" || exit 1
-	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.prepare.log" "${FILE%.c}.llvm"
+	rm -f "${FILE%.c}.prepared" "${FILE%.c}.prepare.log" "${FILE%.c}.llvm"
 }
 
 if [ "`ls "$FILES" | wc -l`" -eq 1 ]; then
