@@ -131,6 +131,7 @@ bool Prepare::runOnModule(Module &M) {
     "kzalloc",
     "nondet_int",
     "__VERIFIER_assume",
+    "__VERIFIER_assert",
     "__VERIFIER_nondet_pointer",
     "__VERIFIER_nondet_pchar",
     "__VERIFIER_nondet_char",
@@ -143,6 +144,10 @@ bool Prepare::runOnModule(Module &M) {
     "__VERIFIER_nondet_ulong",
     "__VERIFIER_nondet_unsigned",
     "__VERIFIER_nondet_u32",
+    "__VERIFIER_nondet_float",
+    "__VERIFIER_nondet_double",
+    "__VERIFIER_nondet_bool",
+    "__VERIFIER_nondet__Bool",
     NULL
   };
   LLVMContext &C = M.getContext();
