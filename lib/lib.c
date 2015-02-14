@@ -66,7 +66,9 @@ MAKE_NONDET(long);
 
 void *__VERIFIER_nondet_pointer()
 {
-	return (void *)__VERIFIER_nondet_long();
+	void *x;						\
+	klee_make_symbolic(&x, sizeof(void *), "void*");	\
+	return x;					\
 }
 
 /* these are crippled */
