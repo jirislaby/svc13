@@ -8,6 +8,7 @@ fi
 
 for FILE in $FILES; do
 	sed -i -e '
+	s@__VERIFIER_assert(\(.*\),.*)@ __VERIFIER_assert(\1)@;
 	s@^\s*\<ERROR:[ ;]*$@& __VERIFIER_error();@;
 	s@^\s*\<ERROR: *return@ERROR: __VERIFIER_error(); return@;
 	s@^\s*{* *ERROR: goto ERROR; *}*\s*$@{ ERROR: __VERIFIER_error(); goto ERROR; }@;
