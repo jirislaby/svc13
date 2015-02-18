@@ -29,9 +29,8 @@ if [ ! -f "$LIB" ]; then
 	exit 1
 fi
 
-if [ ! -f "$LIBo" -o "$LIBo" -ot "$LIB" ]; then
-	clang -Wall "$MFLAG" -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
-fi
+# build lib.o
+clang -Wall "$MFLAG" -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
 
 build_one() {
 	FILE="$1"
