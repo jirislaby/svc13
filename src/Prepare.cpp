@@ -131,7 +131,6 @@ bool Prepare::runOnModule(Module &M) {
     "kzalloc",
     "nondet_int",
     "__VERIFIER_assume",
-    "__VERIFIER_assert",
     "__VERIFIER_nondet_pointer",
     "__VERIFIER_nondet_pchar",
     "__VERIFIER_nondet_char",
