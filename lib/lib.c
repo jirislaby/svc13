@@ -9,6 +9,7 @@ void __VERIFIER_error(void)
 	__assert_fail("Assertion failed", __FILE__, __LINE__, __func__);
 }
 
+void __VERIFIER_assert(int expr) __attribute__((weak));
 void __VERIFIER_assert(int expr)
 {
 	if (!expr)
@@ -76,6 +77,16 @@ void *__VERIFIER_nondet_pointer()
 unsigned int __VERIFIER_nondet_u32()
 {
 	return __VERIFIER_nondet_uint();
+}
+
+unsigned int __VERIFIER_nondet_u8()
+{
+	return __VERIFIER_nondet_uchar();
+}
+
+unsigned int __VERIFIER_nondet_u16()
+{
+	return __VERIFIER_nondet_ushort();
 }
 
 unsigned int __VERIFIER_nondet_unsigned()
