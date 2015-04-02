@@ -30,8 +30,12 @@
 #           runme
 #           VERSIONS
 
+HAS_RESULT="no"
+
 result()
 {
+	HAS_RESULT="yes"
+
 	echo $1
 
 	if [ -z "$2" ]; then
@@ -133,6 +137,9 @@ export LIB_CFLAGS="-I$DIR/include"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR/lib"
 export PATH="$DIR/bin:$PATH"
 
+# make process_set not running klee, we'll run it here
+export RUN_KLEE="no"
+
 $DIR/instrument.sh "$FILE" >"$LOG_FILE" 2>&1
 $DIR/build-fix.sh "$FILE" >>"$LOG_FILE" 2>&1
 $DIR/process_set.sh "$FILE" >>"$LOG_FILE" 2>&1
@@ -145,7 +152,21 @@ esac
 rm -rf "$FILE-klee-out"
 
 KLEE_OUTPUT_FILE="${FILE%.c}.log"
-$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" > $KLEE_OUTPUT_FILE 2>&1
+$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
+	while read LINE; do
+		echo "$LINE" > $KLEE_OUTPUT_FILE
+
+		# if we run into assert, we don't need to explore
+		# all paths and can give result right now
+		if grep -i -q 'assertion failed'; then
+			result FALSE
+		fi
+	done
+
+if [ "$HAS_RESULT" = "yes" ]; then
+	exit 0
+fi
+
 KLEE_RESULT=`$DIR/klee-log-parser.sh $KLEE_OUTPUT_FILE`
 
 if echo "$KLEE_RESULT" | grep -q '^E'; then

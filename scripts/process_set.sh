@@ -72,8 +72,13 @@ if [ "`ls "$FILES" | wc -l`" -eq 1 ]; then
 	EXIT_ON_UNKNOWN=1
 fi
 
+
 for FILE in $FILES; do
 	OUT=`build_one "$FILE" "$EXIT_ON_UNKNOWN"` || exit
-#	echo "$KLEE $KLEE_PARAMS: $FILE" >&2
-	$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" "$OUT" || exit 1
+
+	#echo "$KLEE $KLEE_PARAMS: $FILE" >&2
+	if [ "x$RUN_KLEE" != "xno" ]; then
+		$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" \
+		"$OUT" || exit 1
+	fi
 done
