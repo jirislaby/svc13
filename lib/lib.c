@@ -79,12 +79,28 @@ unsigned int __VERIFIER_nondet_u32()
 	return __VERIFIER_nondet_uint();
 }
 
+unsigned int __VERIFIER_nondet_U32()
+{
+	return __VERIFIER_nondet_uint();
+}
+
 unsigned int __VERIFIER_nondet_u8()
 {
 	return __VERIFIER_nondet_uchar();
 }
 
+/* these type are not sane, but benchmarks use them */
+unsigned int __VERIFIER_nondet_U8()
+{
+	return __VERIFIER_nondet_uchar();
+}
+
 unsigned int __VERIFIER_nondet_u16()
+{
+	return __VERIFIER_nondet_ushort();
+}
+
+unsigned int __VERIFIER_nondet_U16()
 {
 	return __VERIFIER_nondet_ushort();
 }
