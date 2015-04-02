@@ -159,11 +159,14 @@ $DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
 		# if we run into assert, we don't need to explore
 		# all paths and can give result right now
 		if grep -i -q 'assertion failed'; then
-			result FALSE
+			# let this subshell return 3, so that whole
+			# command will return 3 and we can catch it
+			result FALSE 3
 		fi
 	done
 
-if [ "$HAS_RESULT" = "yes" ]; then
+# if we already found assert, do not parse the output
+if [ $? -eq 3 ]; then
 	exit 0
 fi
 
