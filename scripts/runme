@@ -30,12 +30,8 @@
 #           runme
 #           VERSIONS
 
-HAS_RESULT="no"
-
 result()
 {
-	HAS_RESULT="yes"
-
 	echo $1
 
 	if [ -z "$2" ]; then
@@ -153,9 +149,8 @@ rm -rf "$FILE-klee-out"
 
 KLEE_OUTPUT_FILE="${FILE%.c}.log"
 $DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
+	tee $KLEE_OUTPUT_FILE |
 	while read LINE; do
-		echo "$LINE" > $KLEE_OUTPUT_FILE
-
 		# if we run into assert, we don't need to explore
 		# all paths and can give result right now
 		if grep -i -q 'assertion failed'; then
@@ -167,6 +162,7 @@ $DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
 
 # if we already found assert, do not parse the output
 if [ $? -eq 3 ]; then
+	debug "`cat $KLEE_OUTPUT_FILE`"
 	exit 0
 fi
 
