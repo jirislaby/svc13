@@ -19,6 +19,9 @@ test -z "$MFLAG" && MFLAG="-m32"
 test -z "$LIB" && LIB="$DIR/lib.c"
 test -z "$LIBo" && LIBo="${LIB%.c}.o"
 
+# slice by default
+test -z "$SLICE" && SLICE="1"
+
 LIB_CFLAGS="$LIB_CFLAGS -I${DIR}/include"
 
 if [ ! -f "$LIB" ]; then
@@ -26,9 +29,8 @@ if [ ! -f "$LIB" ]; then
 	exit 1
 fi
 
-if [ ! -f "$LIBo" -o "$LIBo" -ot "$LIB" ]; then
-	clang -Wall "$MFLAG" -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
-fi
+# build lib.o
+clang -Wall "$MFLAG" -g -c -emit-llvm -O0 $LIB_CFLAGS -o "$LIBo" "$LIB" || exit 1
 
 build_one() {
 	FILE="$1"
@@ -55,22 +57,28 @@ build_one() {
 		fi
 	fi
 
+	llvm-link -o "${FILE%.c}.linked" "${FILE%.c}.prepared" "$LIBo" || exit 1
+
 	if [ "x$SLICE" = "x1" ]; then
-		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.prepared" -o "${FILE%.c}.sliced" || return
+		opt -load LLVMSlicer.so -simplifycfg -create-hammock-cfg -slice-inter -simplifycfg "${FILE%.c}.linked" -o "$OUT" || exit 1
 	else
-		mv "${FILE%.c}.prepared" "${FILE%.c}.sliced"
+		mv "${FILE%.c}.linked" "$OUT"
 	fi
 
-	llvm-link -o "$OUT" "${FILE%.c}.sliced" "$LIBo" || exit 1
-	rm -f "${FILE%.c}.sliced" "${FILE%.c}.prepared" "${FILE%.c}.prepare.log" "${FILE%.c}.llvm"
+	rm -f "${FILE%.c}.prepared" "${FILE%.c}.prepare.log" "${FILE%.c}.llvm"
 }
 
 if [ "`ls "$FILES" | wc -l`" -eq 1 ]; then
 	EXIT_ON_UNKNOWN=1
 fi
 
+
 for FILE in $FILES; do
 	OUT=`build_one "$FILE" "$EXIT_ON_UNKNOWN"` || exit
-#	echo "$KLEE $KLEE_PARAMS: $FILE" >&2
-	$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" "$OUT" || exit 1
+
+	#echo "$KLEE $KLEE_PARAMS: $FILE" >&2
+	if [ "x$RUN_KLEE" != "xno" ]; then
+		$KLEE $KLEE_PARAMS -output-dir="$OUT-klee-out" \
+		"$OUT" || exit 1
+	fi
 done

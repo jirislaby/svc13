@@ -61,6 +61,27 @@ debug()
 	fi
 }
 
+# return true if first argument represents given property
+check_property()
+{
+	PROP="$1"
+	PATTERN="$2"
+
+	# if PROP is file, read property from file
+	# otherwise assume that PROP is the property
+	if [ -f "$PROP" ]; then
+		CMD=cat
+	else
+		CMD=echo
+	fi
+
+	if $CMD "$PROP" | grep -q "$PATTERN"; then
+		return 0
+	fi
+
+	return 1
+}
+
 if [ -z "$1" ]; then
 	echo no input file >&2
 	error
@@ -84,10 +105,10 @@ export MFLAG
 shift $(($OPTIND-1))
 FILE="$1"
 
-if [ -n "$PROP" ]; then
-	if ! echo "$PROP" | grep -q 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)'; then
-		result UNKNOWN
-	fi
+if [ -n "$PROP" ] &&
+   (! check_property "$PROP" 'CHECK *( *init(main()), *LTL(G *! *call(__VERIFIER_error())) *)' && \
+    ! check_property "$PROP" 'CHECK *( *init(main()), *LTL(G *! *label(ERROR)) *)'); then
+	result UNKNOWN
 fi
 
 # write logs into separate directory
@@ -100,12 +121,20 @@ LOG_FILE=`basename $FILE`
 LOG_FILE="${LOGSDIR}/${LOG_FILE%.c}.proc-log"
 
 export KLEE=$DIR/bin/klee
-export KLEE_RUNTIME_LIBRARY_PATH="$DIR/lib"
+if [ "x$MFLAG" = "x-m64" ]; then
+	export KLEE_RUNTIME_LIBRARY_PATH="$DIR/lib"
+else
+	export KLEE_RUNTIME_LIBRARY_PATH="$DIR/lib32"
+fi
+
 export LIB="$DIR/lib.c"
-export LIBo="$DIR/lib/lib.o"
+export LIBo="`dirname $FILE`/lib.o"
 export LIB_CFLAGS="-I$DIR/include"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DIR/lib"
 export PATH="$DIR/bin:$PATH"
+
+# make process_set not running klee, we'll run it here
+export RUN_KLEE="no"
 
 $DIR/instrument.sh "$FILE" >"$LOG_FILE" 2>&1
 $DIR/build-fix.sh "$FILE" >>"$LOG_FILE" 2>&1
@@ -119,7 +148,24 @@ esac
 rm -rf "$FILE-klee-out"
 
 KLEE_OUTPUT_FILE="${FILE%.c}.log"
-$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" > $KLEE_OUTPUT_FILE 2>&1
+$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
+	tee $KLEE_OUTPUT_FILE |
+	while read LINE; do
+		# if we run into assert, we don't need to explore
+		# all paths and can give result right now
+		if grep -i -q 'assertion failed'; then
+			# let this subshell return 3, so that whole
+			# command will return 3 and we can catch it
+			result FALSE 3
+		fi
+	done
+
+# if we already found assert, do not parse the output
+if [ $? -eq 3 ]; then
+	debug "`cat $KLEE_OUTPUT_FILE`"
+	exit 0
+fi
+
 KLEE_RESULT=`$DIR/klee-log-parser.sh $KLEE_OUTPUT_FILE`
 
 if echo "$KLEE_RESULT" | grep -q '^E'; then
