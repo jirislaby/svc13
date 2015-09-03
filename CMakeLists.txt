@@ -28,8 +28,9 @@ add_subdirectory(include)
 add_subdirectory(scripts)
 
 add_custom_target(
-	svcversion ALL sh svc_version.sh
+	svcversion sh svc_version.sh
 )
 
 install(FILES SVC_SCRIPTS_VERSION
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/
+	OPTIONAL)
