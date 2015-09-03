@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+project(svc13 LANGUAGES CXX)
 
 find_package(LLVM)
 
@@ -6,6 +7,10 @@ find_package(LLVM)
 include(AddLLVM)
 
 llvm_replace_compiler_option(CMAKE_CXX_FLAGS "-frtti" "-fno-rtti")
+
+set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(INSTALL_INC_DIR include CACHE PATH "Installation directory for headers")
+set(INSTALL_DATA_DIR share/${PROJECT_NAME} CACHE PATH "Installation directory for data files")
 
 add_definitions(${LLVM_DEFINITIONS})
 include_directories(${LLVM_INCLUDE_DIRS})

@@ -1,5 +1,5 @@
 install(FILES symbiotic.h
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/)
+	DESTINATION ${INSTALL_INC_DIR})
 
 install(FILES klee.h
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/klee)
+	DESTINATION ${INSTALL_INC_DIR}/klee)
