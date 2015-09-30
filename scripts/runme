@@ -148,7 +148,8 @@ esac
 rm -rf "$FILE-klee-out"
 
 KLEE_OUTPUT_FILE="${FILE%.c}.log"
-$DIR/bin/klee -output-dir="$FILE-klee-out" -optimize "${FILE%.c}.o" 2>&1 |
+$DIR/bin/klee -output-dir="$FILE-klee-out" -write-paths -optimize \
+	"${FILE%.c}.o" 2>&1 |
 	tee $KLEE_OUTPUT_FILE |
 	while read LINE; do
 		# if we run into assert, we don't need to explore
